@@ -124,6 +124,7 @@ export default function Dashboard({ navigation, route }) {
       <Tab.Screen
         name="Account"
         component={Account}
+        initialParams={{ user }}
         options={{
           tabBarLabel: 'Account',
           tabBarIcon: ({ color, size }) => {

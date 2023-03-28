@@ -33,19 +33,17 @@ export default function SignIn({navigation}) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [user, setUser] = useState(null);
 
   const userService = new UserService();
 
   useEffect(() => {
-    console.log(email, password, user)
-  }, [email, password, user])
+    console.log(email, password)
+  }, [email, password])
 
   async function signInWithEmail() {
     setLoading(true)
     const response = await userService.login(supabase, email, password);
     if (response.message) Alert.alert(response.message);
-    // else setUser(response) 
     setLoading(false)
     return response
   }
