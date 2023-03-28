@@ -6,16 +6,18 @@
 //     <Button
 //       title="Go to Jane's profile"
 //       onPress={() =>
-//         navigation.dispatch(
-//           CommonActions.reset({
-//             index: 0,
-//             routes: [{ name: 'Dashboard' }],
-//           })
-//         )
+        // navigation.dispatch(
+        //   CommonActions.reset({
+        //     index: 0,
+        //     routes: [{ name: 'Dashboard' }],
+        //   })
+        // )
 //       }
 //     />
 //   );
 // };
+
+// navigation.navigate('Profile', {name: 'Jane'})
 
 // export default SignIn
 
@@ -25,8 +27,9 @@ import { Alert, StyleSheet, View } from 'react-native'
 import { supabase } from '../utils/supabase'
 import { Button, Input } from 'react-native-elements'
 import UserService from '../services/UserService'
+import { CommonActions } from '@react-navigation/native';
 
-export default function SignIn() {
+export default function SignIn({navigation}) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -42,8 +45,9 @@ export default function SignIn() {
     setLoading(true)
     const response = await userService.login(supabase, email, password);
     if (response.message) Alert.alert(response.message);
-    setUser(response)
+    // else setUser(response) 
     setLoading(false)
+    return response
   }
 
   async function signUpWithEmail() {
@@ -81,7 +85,18 @@ export default function SignIn() {
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
+        <Button title="Sign in" disabled={loading} onPress={async () => {
+            const user = await signInWithEmail()
+            if (user) navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{
+                  name: 'Dashboard',
+                  params: { user: user }
+                }],
+              })
+            )
+          }} />
       </View>
       <View style={styles.verticallySpaced}>
         <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />

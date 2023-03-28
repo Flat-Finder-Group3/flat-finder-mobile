@@ -23,6 +23,7 @@
 
 
 import React from 'react';
+import { useEffect } from 'react';
 import { View, StyleSheet, Button, StatusBar } from 'react-native';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -36,9 +37,12 @@ import Inbox from './screens/Inbox';
 
 const Tab = createBottomTabNavigator();
 
-export default function Dashboard() {
+export default function Dashboard({ navigation, route }) {
   
-
+  const user = route.params.user
+  useEffect(() => {
+    console.log("User inside dashboard! " , user)
+  }, [])
 
   return (
     <Tab.Navigator
