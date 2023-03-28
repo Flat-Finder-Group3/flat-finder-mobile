@@ -32,6 +32,7 @@ import { CommonActions } from '@react-navigation/native';
 import Search from './screens/Search';
 import Home from './screens/Home';
 import Account from './screens/Account';
+import Inbox from './screens/Inbox';
 
 const Tab = createBottomTabNavigator();
 
@@ -103,6 +104,16 @@ export default function Dashboard() {
           tabBarLabel: 'Search',
           tabBarIcon: ({ color, size }) => {
             return <Icon name='home-search' size={size} color={color} />;
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Inbox"
+        component={Inbox}
+        options={{
+          tabBarLabel: 'Inbox',
+          tabBarIcon: ({ color, size }) => {
+            return <Icon name='inbox' size={size} color={color} />;
           },
         }}
       />

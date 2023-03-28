@@ -5,11 +5,11 @@ import { View, StyleSheet, Button, StatusBar } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, BottomNavigation } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import { styles } from '../../styles'
 
 export default function Home({navigation}) {
   return (
-    <View >
+    <View style={styles.container}>
         <Text>My empty home!</Text>
           <Button 
             title='Logout'
