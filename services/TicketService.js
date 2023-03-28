@@ -1,4 +1,4 @@
-import { Ticket } from "@/models/Ticket";
+import { Ticket } from '../models/Ticket'
 
 export default class TicketService{
 

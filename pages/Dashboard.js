@@ -36,8 +36,8 @@ import Account from './screens/Account';
 const Tab = createBottomTabNavigator();
 
 export default function Dashboard() {
-
   
+
 
   return (
     <Tab.Navigator
@@ -120,39 +120,6 @@ export default function Dashboard() {
   );
 }
 
-function HomeScreen({navigation}) {
-  return (
-    <View >
-        <Text>Home!</Text>
-          <Button 
-            title='Logout'
-            onPress={() => navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'Sign in' }],
-              }))}
-          />
-        <StatusBar style="auto" />
-      </View>
-  );
-}
-
-function SettingsScreen({navigation}) {
-  return (
-    <View >
-        <Text>Settings!</Text>
-          <Button 
-            title='Logout'
-            onPress={() => navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'Sign in' }],
-              }))}
-          />
-        <StatusBar style="auto" />
-      </View>
-  );
-}
 
 const styles = StyleSheet.create({
   container: {
