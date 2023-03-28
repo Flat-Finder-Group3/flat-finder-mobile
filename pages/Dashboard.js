@@ -36,6 +36,9 @@ import Account from './screens/Account';
 const Tab = createBottomTabNavigator();
 
 export default function Dashboard() {
+
+  
+
   return (
     <Tab.Navigator
       screenOptions={{
