@@ -34,6 +34,7 @@ export default class UserService {
       email,
       password,
     });
+    if (error) return error;
     const response = await supabase
       .from("profile")
       .update({ last_sign_in_at: data.user.last_sign_in_at })
