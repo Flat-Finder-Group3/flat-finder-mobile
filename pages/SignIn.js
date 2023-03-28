@@ -43,9 +43,12 @@ export default function SignIn({navigation}) {
   async function signInWithEmail() {
     setLoading(true)
     const response = await userService.login(supabase, email, password);
-    if (response.message) Alert.alert(response.message);
     setLoading(false)
-    return response
+    if (response.message) {
+      Alert.alert(response.message)
+    } else {
+      return response
+    }
   }
 
   async function signUpWithEmail() {

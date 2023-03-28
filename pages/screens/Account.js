@@ -7,10 +7,16 @@ import { Text, BottomNavigation } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {styles} from '../../styles'
 import { Avatar } from 'react-native-paper';
+import { useState, useEffect } from 'react';
+import UserService from '../../services/UserService';
+import ListingService from '../../services/ListingService'
+import FavListingService from '../../services/FavListingService'
+import TicketService from '../../services/TicketService'
 
 export default function Account({navigation, route}) {
 
   const user = route.params.user
+
   console.log('User in account! ', user)
 
   return (
