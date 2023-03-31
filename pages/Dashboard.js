@@ -1,27 +1,3 @@
-// import { View, Text, StatusBar, Button } from "react-native";
-// import { CommonActions } from '@react-navigation/native';
-
-// function Dashboard({navigation}) {  
-  
-//   return (
-    // <View >
-    //     <Text>Open up App.js to start working on your app!</Text>
-    //       <Button 
-    //         title='Logout'
-    //         onPress={() => navigation.dispatch(
-    //           CommonActions.reset({
-    //             index: 0,
-    //             routes: [{ name: 'Sign in' }],
-    //           }))}
-    //       />
-    //     <StatusBar style="auto" />
-    //   </View>
-//   )
-// }
-
-// export default Dashboard;
-
-
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, Button, StatusBar } from 'react-native';
@@ -51,30 +27,34 @@ export default function Dashboard({ navigation, route }) {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
 
+
   const userService = new UserService();
   const listingService = new ListingService();
   const favListingSevice = new FavListingService();
   const ticketService = new TicketService();
 
-  useEffect(() => {
-    (async () => {
-      const [allListings] = await Promise.all([
-        listingService.getListings(),
-      ]);
-      // user_profile.is_admin && router.push("/admin");
-      // setListing((prevListing) => ({ ...prevListing, owner: user_profile.id }));
-      setListings(allListings);
+  async function fetchData() {
+    const [allListings] = await Promise.all([
+      listingService.getListings(),
+    ]);
+    // user_profile.is_admin && router.push("/admin");
+    // setListing((prevListing) => ({ ...prevListing, owner: user_profile.id }));
+    setListings(allListings);
 
-      const [new_favListings, new_ownListings, new_tickets] = await Promise.all([
-        favListingSevice.getFavListing(user.id),
-        listingService.getOwnListing(user.id),
-        ticketService.getUserTicket(user.id),
-      ]);
-      setFavListings(new_favListings);
-      setOwnListings(new_ownListings);
-      setTickets(new_tickets);
-      setLoading(false);
-    })();
+    const [new_favListings, new_ownListings, new_tickets] = await Promise.all([
+      favListingSevice.getFavListing(user.id),
+      listingService.getOwnListing(user.id),
+      ticketService.getUserTicket(user.id),
+    ]);
+    setFavListings(new_favListings);
+    setOwnListings(new_ownListings);
+    setTickets(new_tickets);
+    setLoading(false);
+  }
+
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -146,6 +126,7 @@ export default function Dashboard({ navigation, route }) {
             ownListings={ownListings}
             favListings={favListings}
             loading={loading}
+            fetchData={fetchData}
           />
         )}
       
@@ -158,7 +139,15 @@ export default function Dashboard({ navigation, route }) {
       />
       <Tab.Screen
         name="Search"
-        component={Search}
+        children={(props) => (
+          <Search
+            {...props}
+            user={user}
+            listings={listings}
+            loading={loading}
+            fetchData={fetchData}
+          />
+        )}
         options={{
           tabBarLabel: 'Search',
           tabBarIcon: ({ color, size }) => {
