@@ -23,7 +23,7 @@
 
 
 import React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { View, StyleSheet, Button, StatusBar } from 'react-native';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -34,12 +34,57 @@ import Search from './screens/Search';
 import Home from './screens/Home';
 import Account from './screens/Account';
 import Inbox from './screens/Inbox';
+import UserService from '../services/UserService';
+import ListingService from '../services/ListingService';
+import FavListingService from '../services/FavListingService';
+import TicketService from '../services/TicketService';
 
 const Tab = createBottomTabNavigator();
 
 export default function Dashboard({ navigation, route }) {
   
   const user = route.params.user
+
+  const [listings, setListings] = useState([]);
+  const [favListings, setFavListings] = useState([]);
+  const [ownListings, setOwnListings] = useState([])
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const userService = new UserService();
+  const listingService = new ListingService();
+  const favListingSevice = new FavListingService();
+  const ticketService = new TicketService();
+
+  useEffect(() => {
+    (async () => {
+      const [allListings] = await Promise.all([
+        listingService.getListings(),
+      ]);
+      // user_profile.is_admin && router.push("/admin");
+      // setListing((prevListing) => ({ ...prevListing, owner: user_profile.id }));
+      setListings(allListings);
+
+      const [new_favListings, new_ownListings, new_tickets] = await Promise.all([
+        favListingSevice.getFavListing(user.id),
+        listingService.getOwnListing(user.id),
+        ticketService.getUserTicket(user.id),
+      ]);
+      setFavListings(new_favListings);
+      setOwnListings(new_ownListings);
+      setTickets(new_tickets);
+      setLoading(false);
+    })();
+  }, []);
+
+  useEffect(() => {
+
+    console.log({ownListings, tickets, listings})
+    
+  }, [ownListings, tickets, listings])
+
+
+
   useEffect(() => {
     console.log("User inside dashboard! " , user)
   }, [])
@@ -93,7 +138,17 @@ export default function Dashboard({ navigation, route }) {
     >
       <Tab.Screen
         name="Home"
-        component={Home}
+        children={(props) => (
+          <Home
+            {...props}
+            user={user}
+            tickets={tickets}
+            ownListings={ownListings}
+            favListings={favListings}
+            loading={loading}
+          />
+        )}
+      
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => {
