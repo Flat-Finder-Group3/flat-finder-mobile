@@ -139,7 +139,15 @@ export default function Dashboard({ navigation, route }) {
       />
       <Tab.Screen
         name="Search"
-        component={Search}
+        children={(props) => (
+          <Search
+            {...props}
+            user={user}
+            listings={listings}
+            loading={loading}
+            fetchData={fetchData}
+          />
+        )}
         options={{
           tabBarLabel: 'Search',
           tabBarIcon: ({ color, size }) => {
