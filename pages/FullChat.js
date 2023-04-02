@@ -1,6 +1,7 @@
 import {useState} from 'react'
-import { View, Text, StyleSheet, Button, StatusBar, FlatList, RefreshControl } from 'react-native';
+import { View, TextInput, StyleSheet, Button, StatusBar, FlatList, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DirectMessage from '../components/DirectMessage';
 
 export default function FullChat({navigation, route}) {
   
@@ -24,12 +25,14 @@ export default function FullChat({navigation, route}) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        renderItem={({item}) => 
-        (<View>
-          <Text>{item.content}</Text>
-        </View>)}
+        renderItem={({item}) => (<DirectMessage item={item} user={user} conversation={conversation}/>)}
         data={messages}
         keyExtractor={item => item.id}
+      />
+      <TextInput
+        onChangeText={() => {}}
+        value={undefined}
+        placeholder="useless placeholder"
       />
       <StatusBar style="auto" />
     </SafeAreaView>
