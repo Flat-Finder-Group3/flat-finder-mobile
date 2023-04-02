@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignIn from './pages/SignIn';
 import Dashboard from './pages/Dashboard';
+import FullChat from './pages/FullChat';
 import 'react-native-url-polyfill/auto';
 // import colorScheme from './utils/colorScheme.json'
 // import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
@@ -76,6 +77,7 @@ export default function App() {
             options={{title: 'Welcome'}}
             />
           <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerLeft: () => null}}/>
+          <Stack.Screen name="Chat" component={FullChat} />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
