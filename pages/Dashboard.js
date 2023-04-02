@@ -14,6 +14,7 @@ import UserService from '../services/UserService';
 import ListingService from '../services/ListingService';
 import FavListingService from '../services/FavListingService';
 import TicketService from '../services/TicketService';
+import MessageService from '../services/messageService'
 
 const Tab = createBottomTabNavigator();
 
@@ -26,30 +27,42 @@ export default function Dashboard({ navigation, route }) {
   const [ownListings, setOwnListings] = useState([])
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [conversations, setConversations] = useState([]);
+  const [messages, setMessages] = useState([])
 
 
   const userService = new UserService();
   const listingService = new ListingService();
   const favListingSevice = new FavListingService();
   const ticketService = new TicketService();
+  const messageService = new MessageService();
 
   async function fetchData() {
     const [allListings] = await Promise.all([
       listingService.getListings(),
     ]);
-    // user_profile.is_admin && router.push("/admin");
-    // setListing((prevListing) => ({ ...prevListing, owner: user_profile.id }));
     setListings(allListings);
 
-    const [new_favListings, new_ownListings, new_tickets] = await Promise.all([
-      favListingSevice.getFavListing(user.id),
-      listingService.getOwnListing(user.id),
-      ticketService.getUserTicket(user.id),
-    ]);
+    const [new_favListings, new_ownListings, new_tickets, new_conversations] = await Promise.all(
+      [
+        favListingSevice.getFavListing(user.id),
+        listingService.getOwnListing(user.id),
+        ticketService.getUserTicket(user.id),
+        messageService.getUserConversations(user.id)
+      ]
+    );
     setFavListings(new_favListings);
     setOwnListings(new_ownListings);
     setTickets(new_tickets);
     setLoading(false);
+    setConversations(new_conversations);
+
+    console.log({conversations})
+    const twoDMessageArray = await Promise.all(new_conversations.map(conversation => {
+      return messageService.getConversationMessages(conversation.id)
+    }))
+    console.log({twoDMessageArray})
+    setMessages(twoDMessageArray)
   }
 
 
@@ -157,7 +170,16 @@ export default function Dashboard({ navigation, route }) {
       />
       <Tab.Screen
         name="Inbox"
-        component={Inbox}
+        children={(props) => (
+          <Inbox
+            {...props}
+            user={user}
+            conversations={conversations}
+            messages={messages}
+            loading={loading}
+            fetchData={fetchData}
+          />
+        )}
         options={{
           tabBarLabel: 'Inbox',
           tabBarIcon: ({ color, size }) => {
