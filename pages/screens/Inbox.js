@@ -2,12 +2,6 @@ import {CommonActions} from '@react-navigation/native'
 import React from 'react';
 import {useState} from 'react'
 import { View, StyleSheet, Button, StatusBar, FlatList, RefreshControl } from 'react-native';
-
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, BottomNavigation } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-// import { styles } from '../../styles';
-import { Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ConversationCard from '../../components/ConversationCard'
 
@@ -23,8 +17,9 @@ export default function Inbox({navigation, user, conversations, messages, loadin
     setRefreshing(false);
   };
 
-  const handleConversationPress = (item) => {
-    navigation.navigate('Chat', { conversation: item });
+  const handleConversationPress = (item, conversationMessages) => {
+    console.log("Here are the params to pass to FullChat component: ", item, conversationMessages)
+    navigation.navigate('Chat', { conversation: item, messages: conversationMessages, user});
   };
   
   return (
@@ -34,26 +29,12 @@ export default function Inbox({navigation, user, conversations, messages, loadin
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          renderItem={({item}) => <ConversationCard item={item} messages={messages} onPress={() => handleConversationPress(item)} />}
+          renderItem={({item}) => <ConversationCard item={item} messages={messages} onPress={(conversationMessages) => handleConversationPress(item, conversationMessages)} />}
           data={conversations}
           keyExtractor={item => item.id}
         />
         <StatusBar style="auto" />
     </SafeAreaView>
-
-
-    // <View style={styles.container} >
-    //     <Text>I wish I had something in my inbox but i dont!!</Text>
-    //       <Button 
-    //         title='Logout'
-    //         onPress={() => navigation.dispatch(
-    //           CommonActions.reset({
-    //             index: 0,
-    //             routes: [{ name: 'Sign in' }],
-    //           }))}
-    //       />
-    //     <StatusBar style="auto" />
-    //   </View>
   );
 }
 
