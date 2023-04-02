@@ -10,13 +10,23 @@ export default function ConversationCard({item, navigation, messages, onPress}){
   const otherUser =  item.user1.email ? item.user1 : item.user2;
   const initials = otherUser.name.split(' ').map((part) => part[0]).join('')
   const avatarSize = 80;
-  // const gradientColors = ['#4c669f', '#3b5998', '#192f6a'];
   const gradientColors = ['#FF6B92',  '#4c669f'];
-
+  
   console.log("messsages in inboxxxxx" , messages)
 
+  function handleOnPress() {
+    let conversationMessages = [];
+    for (const exchanges of messages){
+      if (exchanges[0].conversation_id === item.id){
+        conversationMessages = exchanges
+        break;
+      }
+    }
+    onPress(conversationMessages)
+  }
+  
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={handleOnPress}>
       <View style={globalStyles.outline}>
         {otherUser.avatar_url ? 
         <Avatar.Image size={80} source={{ uri: otherUser.avatar_url }} /> :
@@ -32,8 +42,8 @@ export default function ConversationCard({item, navigation, messages, onPress}){
 
 const globalStyles = StyleSheet.create({
   outline: {
-    borderWidth: 1,
-    borderColor: 'red',
+    // borderWidth: 1,
+    // borderColor: 'red',
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center',
@@ -48,3 +58,4 @@ const globalStyles = StyleSheet.create({
     alignSelf: 'flex-start'
   }
 });
+// const gradientColors = ['#4c669f', '#3b5998', '#192f6a'];
