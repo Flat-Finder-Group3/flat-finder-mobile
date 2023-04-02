@@ -22,6 +22,10 @@ export default function Inbox({navigation, user, conversations, messages, loadin
     await fetchData();
     setRefreshing(false);
   };
+
+  const handleConversationPress = (item) => {
+    navigation.navigate('Chat', { conversation: item });
+  };
   
   return (
 
@@ -30,7 +34,7 @@ export default function Inbox({navigation, user, conversations, messages, loadin
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          renderItem={ConversationCard}
+          renderItem={({item}) => <ConversationCard item={item} messages={messages} onPress={() => handleConversationPress(item)} />}
           data={conversations}
           keyExtractor={item => item.id}
         />
