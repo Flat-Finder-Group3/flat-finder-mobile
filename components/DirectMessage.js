@@ -22,7 +22,7 @@ export default function DirectMessage({item, conversation, user}){
         <Avatar.Image size={avatarSize} source={{ uri: author.avatar_url }} /> :
         <GradientAvatar size={avatarSize} gradientColors={gradientColors} initials={initials}/>}
       <View style={isFromUser ? globalStyles.senderBubble : globalStyles.receiverBubble }>
-        <Text style={[isFromUser ? globalStyles.senderMessage : globalStyles.receiverMessage, { maxWidth: 200, flexWrap: 'wrap' }]}>{item.content}</Text>
+        <Text style={[isFromUser ? globalStyles.senderMessage : globalStyles.receiverMessage, { maxWidth: 200, flexWrap: 'wrap' }]}>{item.content.trim()}</Text>
       </View>
     </View>
 
