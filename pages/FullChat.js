@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -18,11 +18,14 @@ import MessageService from '../services/messageService'
 
 export default function FullChat({navigation, route}) {
   
-    const { conversation, messages, user, fetchData, setMessages} = route.params;
-    console.log("Conversation: ", conversation)
-    console.log("messages: ", messages)
-    console.log('user: ', user)
+    const { conversation, messages, user, fetchData, setMessages, allMessages} = route.params;
     console.log('setMessages ', setMessages)
+
+    const [currentMessages, setCurrentMessages] = useState(messages);
+
+  // useEffect(() => {
+  //   setCurrentMessages(messages)
+  // }, [])
 
   const [refreshing, setRefreshing] = useState(false);
   const [content, setContent] = useState('');
@@ -36,23 +39,26 @@ export default function FullChat({navigation, route}) {
     if (content) {
       const receiver = conversation.user1 === user.id ? conversation.user2.id : conversation.user1.id
       const result = await messageService.addMessage(user.id, content, receiver)
+      setContent('');
       const new_message = result.data[0]
+      messages.concat([new_message])
       console.log("Message we got back: ", new_message)
-
-      //TODO: update state so that message shows on the screen
-
+      setCurrentMessages((prev) => prev.concat([new_message]))
+      setMessages((prev) => {
+        // Find the index of the current conversation in the allMessages array
+        const conversationIndex = prev.findIndex((msgArray) => msgArray.length > 0 && msgArray[0].conversation_id === conversation.id);
       
-      // setMessages(prev => {
-      //   console.log({prev})
-      //   for (const conv of prev){
-      //     if (conv.id === new_message.conversation_id){
-      //       conv.concat([new_message])
-      //       return prev;
-      //     }
-      //   }
-      // })
+        // If the conversation is found, update the messages for that conversation
+        if (conversationIndex !== -1) {
+          const updatedMessages = [...prev];
+          updatedMessages[conversationIndex] = updatedMessages[conversationIndex].concat([new_message]);
+          return updatedMessages;
+        } else {
+          // If the conversation is not found, add the new message to the allMessages array
+          return [...prev, [new_message]];
+        }
+      });
     }
-
   }
 
   const onRefresh = async () => {
@@ -74,13 +80,13 @@ export default function FullChat({navigation, route}) {
                   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />  
                 }
                 renderItem={({item}) => (<DirectMessage item={item} user={user} conversation={conversation}/>)}
-                data={messages}
+                data={currentMessages}
                 keyExtractor={item => item.id}
                 />
                   <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'position' : 'height'}
                     style={styles.keyboardAvoidingView}
-                    keyboardVerticalOffset={Platform.OS === 'ios' ? -55 : 20}
+                    keyboardVerticalOffset={Platform.OS === 'ios' ? -80 : 20}
                     >
                     <View style={styles.inputAndSendContainer}>
                     <TextInput
@@ -132,6 +138,7 @@ const styles = StyleSheet.create({
   },
   inputAndSendContainer: {
     borderWidth: 1,
+    backgroundColor: '#FFFFFF',
     // borderColor: 'red',
     borderColor: '#e1e3e1',
     flexDirection: 'row',

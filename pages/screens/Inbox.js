@@ -20,7 +20,7 @@ export default function Inbox({navigation, user, conversations, messages, loadin
 
   const handleConversationPress = (item, conversationMessages) => {
     console.log("Here are the params to pass to FullChat component: ", item, conversationMessages)
-    navigation.navigate('Chat', { conversation: item, messages: conversationMessages, user, fetchData, setMessages});
+    navigation.navigate('Chat', { conversation: item, messages: conversationMessages, user, fetchData, setMessages, allMessages: messages});
   };
   
   return (
