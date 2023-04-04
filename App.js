@@ -6,9 +6,6 @@ import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
 import FullChat from "./pages/FullChat";
 import "react-native-url-polyfill/auto";
-// import colorScheme from './utils/colorScheme.json'
-// import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
-// import { useColorScheme } from 'react-native';
 import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
@@ -17,6 +14,7 @@ import {
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { theme } from "./utils/utils";
+import ListingInfo from "./pages/ListingInfo";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -38,6 +36,11 @@ export default function App() {
               name="Dashboard"
               component={Dashboard}
               options={{ headerLeft: () => null }}
+            />
+            <Stack.Screen
+              name="Listing"
+              component={ListingInfo}
+              options={{ title: 'Listing'}}
             />
             <Stack.Screen name="Chat" component={FullChat} />
           </Stack.Navigator>

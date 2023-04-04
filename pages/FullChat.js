@@ -15,7 +15,7 @@ import { Button, Icon } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector, useDispatch } from "react-redux";
 import DirectMessage from "../components/DirectMessage";
-import { addMessage } from "../redux/messagesReducer";
+import { addMessage } from "../redux/messagesSlice";
 import MessageService from "../services/messageService";
 
 export default function FullChat({ navigation, route }) {

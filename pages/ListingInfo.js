@@ -2,19 +2,22 @@ import { CommonActions } from "@react-navigation/native";
 import React from "react";
 import { View, StyleSheet, Button, StatusBar } from "react-native";
 import { Text, BottomNavigation } from "react-native-paper";
-import { styles } from "../../styles";
+import { styles } from "../styles";
 import { Avatar } from "react-native-paper";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-export default function Account({ navigation, route }) {
+export default function ListingInfo({ navigation, route }) {
   // const user = route.params.user
 
   const user = useSelector((state) => state.user);
+  const listing = useSelector(state => state.selectedListing)
+  console.log("LISTING INSIDE LISTING YO:", listing)
 
   console.log("User in account! ", user);
 
   return (
+    //CHANGE THIS TO WHATEVER YOU WANT
     <View style={{ ...styles.container, gap: "10rem" }}>
       <Avatar.Image size={150} source={{ uri: user.avatar_url }} />
       <Text style={{ fontSize: 25, fontWeight: 600 }}>{user.name}</Text>

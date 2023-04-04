@@ -16,7 +16,7 @@ import FavListingService from "../services/FavListingService";
 import TicketService from "../services/TicketService";
 import MessageService from "../services/messageService";
 import { useSelector, useDispatch } from "react-redux";
-import { setAllMessages, addMessage } from "../redux/messagesReducer";
+import { setAllMessages, addMessage } from "../redux/messagesSlice";
 
 const Tab = createBottomTabNavigator();
 
