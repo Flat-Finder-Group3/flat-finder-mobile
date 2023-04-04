@@ -18,14 +18,21 @@ import MessageService from '../services/messageService'
 
 export default function FullChat({navigation, route}) {
   
-    const { conversation, messages, user, fetchData, setMessages, allMessages} = route.params;
-    console.log('setMessages ', setMessages)
+    const { conversation, messages, user, fetchData, setMessages, conversationMessages} = route.params;
+    console.log('🟢 CONVERSATION MESSAGES IN FULLCHAT: ', conversationMessages )
 
-    const [currentMessages, setCurrentMessages] = useState(messages);
+    const [currentMessages, setCurrentMessages] = useState(conversationMessages);
 
-  // useEffect(() => {
-  //   setCurrentMessages(messages)
-  // }, [])
+
+  useEffect(() => {
+    console.log("Am i being called on state update? CONVERSATION MESSAGES")
+    setCurrentMessages(conversationMessages)
+  }, [conversationMessages])
+
+
+  useEffect(() => {
+    console.log('State changed FULLCHAT 🟢🟢🟢 MESSAGES')
+  }, [messages])
 
   const [refreshing, setRefreshing] = useState(false);
   const [content, setContent] = useState('');
@@ -43,7 +50,7 @@ export default function FullChat({navigation, route}) {
       const new_message = result.data[0]
       messages.concat([new_message])
       console.log("Message we got back: ", new_message)
-      setCurrentMessages((prev) => prev.concat([new_message]))
+      // setCurrentMessages((prev) => prev.concat([new_message]))
       setMessages((prev) => {
         // Find the index of the current conversation in the allMessages array
         const conversationIndex = prev.findIndex((msgArray) => msgArray.length > 0 && msgArray[0].conversation_id === conversation.id);
@@ -72,17 +79,17 @@ export default function FullChat({navigation, route}) {
     // <SafeAreaView  style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        // keyboardVerticalOffset={Platform.OS === 'ios' ? -20 : 20}
         style={styles.container}>
-              <FlatList
-                style={{flex: 1}}
-                refreshControl={
-                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />  
-                }
-                renderItem={({item}) => (<DirectMessage item={item} user={user} conversation={conversation}/>)}
-                data={currentMessages}
-                keyExtractor={item => item.id}
-                />
+                  <FlatList
+                    style={{flex: 1}}
+                    refreshControl={
+                      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />  
+                    }
+                    renderItem={({item}) => (<DirectMessage item={item} user={user} conversation={conversation}/>)}
+                    data={conversationMessages}
+                    keyExtractor={item => item.id}
+                    />
                   <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'position' : 'height'}
                     style={styles.keyboardAvoidingView}
@@ -99,7 +106,7 @@ export default function FullChat({navigation, route}) {
                     </View>
                   </KeyboardAvoidingView>
               <StatusBar style="auto" />
-      </KeyboardAvoidingView>
+    </KeyboardAvoidingView>
         // </SafeAreaView>
   )
 
@@ -162,3 +169,4 @@ const styles = StyleSheet.create({
     
   }
 });
+

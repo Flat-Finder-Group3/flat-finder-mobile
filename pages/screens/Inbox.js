@@ -1,6 +1,6 @@
 import {CommonActions} from '@react-navigation/native'
 import React from 'react';
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import { View, Text, StyleSheet, Button, StatusBar, FlatList, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ConversationCard from '../../components/ConversationCard'
@@ -17,10 +17,15 @@ export default function Inbox({navigation, user, conversations, messages, loadin
     await fetchData();
     setRefreshing(false);
   };
+  
+    useEffect(() => {
+      console.log('State changed INBOX 🟢🟢🟢')
+    }, [messages])
+
 
   const handleConversationPress = (item, conversationMessages) => {
     console.log("Here are the params to pass to FullChat component: ", item, conversationMessages)
-    navigation.navigate('Chat', { conversation: item, messages: conversationMessages, user, fetchData, setMessages, allMessages: messages});
+    navigation.navigate('Chat', { conversation: item, conversationMessages, user, fetchData, setMessages, messages: JSON.stringify(messages)});
   };
   
   return (
