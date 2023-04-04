@@ -1,35 +1,33 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { View, StyleSheet, Button, StatusBar } from 'react-native';
+import React from "react";
+import { useEffect, useState } from "react";
+import { View, StyleSheet, Button, StatusBar } from "react-native";
 
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, BottomNavigation } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { CommonActions } from '@react-navigation/native';
-import Search from './screens/Search';
-import Home from './screens/Home';
-import Account from './screens/Account';
-import Inbox from './screens/Inbox';
-import UserService from '../services/UserService';
-import ListingService from '../services/ListingService';
-import FavListingService from '../services/FavListingService';
-import TicketService from '../services/TicketService';
-import MessageService from '../services/messageService'
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Text, BottomNavigation } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { CommonActions } from "@react-navigation/native";
+import Search from "./screens/Search";
+import Home from "./screens/Home";
+import Account from "./screens/Account";
+import Inbox from "./screens/Inbox";
+import UserService from "../services/UserService";
+import ListingService from "../services/ListingService";
+import FavListingService from "../services/FavListingService";
+import TicketService from "../services/TicketService";
+import MessageService from "../services/messageService";
 
 const Tab = createBottomTabNavigator();
 
 export default function Dashboard({ navigation, route }) {
-  
-  const user = route.params.user
+  const user = route.params.user;
 
   const [listings, setListings] = useState([]);
   const [favListings, setFavListings] = useState([]);
-  const [ownListings, setOwnListings] = useState([])
+  const [ownListings, setOwnListings] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState([]);
-  const [messages, setMessages] = useState([])
-
+  const [messages, setMessages] = useState([]);
 
   const userService = new UserService();
   const listingService = new ListingService();
@@ -38,49 +36,43 @@ export default function Dashboard({ navigation, route }) {
   const messageService = new MessageService();
 
   async function fetchData() {
-    const [allListings] = await Promise.all([
-      listingService.getListings(),
-    ]);
+    const [allListings] = await Promise.all([listingService.getListings()]);
     setListings(allListings);
 
-    const [new_favListings, new_ownListings, new_tickets, new_conversations] = await Promise.all(
-      [
+    const [new_favListings, new_ownListings, new_tickets, new_conversations] =
+      await Promise.all([
         favListingSevice.getFavListing(user.id),
         listingService.getOwnListing(user.id),
         ticketService.getUserTicket(user.id),
-        messageService.getUserConversations(user.id)
-      ]
-    );
+        messageService.getUserConversations(user.id),
+      ]);
     setFavListings(new_favListings);
     setOwnListings(new_ownListings);
     setTickets(new_tickets);
     setLoading(false);
     setConversations(new_conversations);
 
-    console.log({conversations})
-    const twoDMessageArray = await Promise.all(new_conversations.map(conversation => {
-      return messageService.getConversationMessages(conversation.id)
-    }))
-    console.log({twoDMessageArray})
-    setMessages(twoDMessageArray)
+    console.log({ conversations });
+    const twoDMessageArray = await Promise.all(
+      new_conversations.map((conversation) => {
+        return messageService.getConversationMessages(conversation.id);
+      })
+    );
+    console.log({ twoDMessageArray });
+    setMessages(twoDMessageArray);
   }
-
 
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
-
-    console.log({ownListings, tickets, listings})
-    
-  }, [ownListings, tickets, listings])
-
-
+    console.log({ ownListings, tickets, listings });
+  }, [ownListings, tickets, listings]);
 
   useEffect(() => {
-    console.log("User inside dashboard! " , user)
-  }, [])
+    console.log("User inside dashboard! ", user);
+  }, []);
 
   return (
     <Tab.Navigator
@@ -93,7 +85,7 @@ export default function Dashboard({ navigation, route }) {
           safeAreaInsets={insets}
           onTabPress={({ route, preventDefault }) => {
             const event = navigation.emit({
-              type: 'tabPress',
+              type: "tabPress",
               target: route.key,
               canPreventDefault: true,
             });
@@ -101,7 +93,7 @@ export default function Dashboard({ navigation, route }) {
             if (event.defaultPrevented) {
               preventDefault();
             } else {
-             navigation.dispatch({
+              navigation.dispatch({
                 ...CommonActions.navigate(route.name, route.params),
                 target: state.key,
               });
@@ -136,15 +128,15 @@ export default function Dashboard({ navigation, route }) {
             {...props}
             user={user}
             tickets={tickets}
+            setTickets={setTickets}
             ownListings={ownListings}
             favListings={favListings}
             loading={loading}
             fetchData={fetchData}
           />
         )}
-      
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: "Home",
           tabBarIcon: ({ color, size }) => {
             return <Icon name="home" size={size} color={color} />;
           },
@@ -162,9 +154,9 @@ export default function Dashboard({ navigation, route }) {
           />
         )}
         options={{
-          tabBarLabel: 'Search',
+          tabBarLabel: "Search",
           tabBarIcon: ({ color, size }) => {
-            return <Icon name='home-search' size={size} color={color} />;
+            return <Icon name="home-search" size={size} color={color} />;
           },
         }}
       />
@@ -182,9 +174,9 @@ export default function Dashboard({ navigation, route }) {
           />
         )}
         options={{
-          tabBarLabel: 'Inbox',
+          tabBarLabel: "Inbox",
           tabBarIcon: ({ color, size }) => {
-            return <Icon name='inbox' size={size} color={color} />;
+            return <Icon name="inbox" size={size} color={color} />;
           },
         }}
       />
@@ -193,7 +185,7 @@ export default function Dashboard({ navigation, route }) {
         component={Account}
         initialParams={{ user }}
         options={{
-          tabBarLabel: 'Account',
+          tabBarLabel: "Account",
           tabBarIcon: ({ color, size }) => {
             return <Icon name="account" size={size} color={color} />;
           },
@@ -203,11 +195,10 @@ export default function Dashboard({ navigation, route }) {
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
