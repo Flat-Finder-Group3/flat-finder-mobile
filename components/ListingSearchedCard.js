@@ -8,11 +8,6 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function ListingSearchedCard({ item, handleMoreInfoPress }) {
 
-
-
-  console.log('MY item:::', item)
-
-
   return (
     <Card style={{ marginBottom: "10%", marginTop: "10%" }}>
       <Card.Cover source={{ uri: item.images[0] }} />
