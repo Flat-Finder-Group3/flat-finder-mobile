@@ -15,6 +15,9 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Searchbar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedListing } from "../../redux/selectedListingSlice";
+import ListingSearchedCard from "../../components/ListingSearchedCard";
 
 export default function Search({ navigation, loading, listings, fetchData }) {
   console.log(
@@ -25,6 +28,7 @@ export default function Search({ navigation, loading, listings, fetchData }) {
   const [refreshing, setRefreshing] = useState(false);
 
   const onChangeSearch = (query) => setSearchQuery(query);
+  const dispatch = useDispatch();
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -44,44 +48,9 @@ export default function Search({ navigation, loading, listings, fetchData }) {
     setSearchQuery(textValue);
   };
 
-  function renderItem({ item }) {
-    return (
-      <Card style={{ marginBottom: "10%", marginTop: "10%" }}>
-        <Card.Cover source={{ uri: item.images[0] }} />
-
-        <Card.Title
-          title={item.title}
-          subtitle={<Text>£ {item.monthly_price} (pcm)</Text>}
-          // left={() => <FontAwesome name="bed" size={24} color="black" />}
-        />
-        <Card.Content>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <FontAwesome name="map-marker" size={24} />
-            <Text>
-              &nbsp; {item.address.second_line}, {item.address.city} &nbsp;
-            </Text>
-            <Text>{"\n"}</Text>
-            <Text>{item.key_features.beds} &nbsp;</Text>
-            <FontAwesome name="bed" size={24} />
-            <Text> &nbsp;</Text>
-            <Text>{item.key_features.bathrooms} &nbsp;</Text>
-            <FontAwesome name="bath" size={24} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text>Available now (L/S)</Text>
-          </View>
-        </Card.Content>
-
-        <Card.Actions>
-          <FontAwesome
-            name="star"
-            size={24}
-            style={{ alignContent: "center" }}
-          />
-          <Button>More info</Button>
-        </Card.Actions>
-      </Card>
-    );
+  function handleMoreInfoPress(item) {
+    dispatch(setSelectedListing(item))
+    navigation.navigate("Listing");
   }
 
   if (loading) {
@@ -103,7 +72,7 @@ export default function Search({ navigation, loading, listings, fetchData }) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        renderItem={renderItem}
+        renderItem={({item}) => <ListingSearchedCard item={item} handleMoreInfoPress={handleMoreInfoPress}/>}
         data={listings.filter(
           (listing) =>
             listing.address.city.toLowerCase() === searchQuery.toLowerCase()

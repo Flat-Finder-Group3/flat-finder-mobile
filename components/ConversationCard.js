@@ -17,7 +17,7 @@ export default function ConversationCard({
   messages,
   onPress,
 }) {
-  console.log("Item in convesation card: ", item);
+  // console.log("Item in convesation card: ", item)
   const otherUser = item.user1.email ? item.user1 : item.user2;
   const initials = otherUser.name
     .split(" ")
@@ -25,28 +25,8 @@ export default function ConversationCard({
     .join("");
   const avatarSize = 80;
   const gradientColors = ["#FF6B92", "#4c669f"];
-
-  console.log("messsages in inboxxxxx", messages);
-
-  function handleOnPress() {
-    let conversationMessages = [];
-    for (const exchanges of messages) {
-      if (exchanges[0].conversation_id === item.id) {
-        conversationMessages = exchanges;
-        break;
-      }
-    }
-    onPress(conversationMessages);
-  }
-
-  function getLastMessage() {
-    const lastExchange = messages[messages.length - 1];
-    const lastMessage = lastExchange[lastExchange.length - 1];
-    return lastMessage.message;
-  }
-
   return (
-    <TouchableOpacity onPress={handleOnPress}>
+    <TouchableOpacity onPress={onPress}>
       <View style={globalStyles.outline}>
         {otherUser.avatar_url ? (
           <Avatar.Image size={80} source={{ uri: otherUser.avatar_url }} />
