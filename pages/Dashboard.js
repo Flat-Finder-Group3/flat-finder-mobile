@@ -169,6 +169,7 @@ export default function Dashboard({ navigation, route }) {
             conversations={conversations}
             messages={messages}
             loading={loading}
+            setMessages={setMessages}
             fetchData={fetchData}
           />
         )}

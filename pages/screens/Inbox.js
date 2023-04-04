@@ -1,15 +1,16 @@
 import {CommonActions} from '@react-navigation/native'
 import React from 'react';
 import {useState} from 'react'
-import { View, StyleSheet, Button, StatusBar, FlatList, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, Button, StatusBar, FlatList, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ConversationCard from '../../components/ConversationCard'
 
 
-export default function Inbox({navigation, user, conversations, messages, loading, fetchData}) {
+export default function Inbox({navigation, user, conversations, messages, loading, fetchData, setMessages}) {
   
   // console.log("Conversations in inbox, ", conversations)
   const [refreshing, setRefreshing] = useState(false)
+  console.log('setMessages: ', setMessages)
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -19,12 +20,15 @@ export default function Inbox({navigation, user, conversations, messages, loadin
 
   const handleConversationPress = (item, conversationMessages) => {
     console.log("Here are the params to pass to FullChat component: ", item, conversationMessages)
-    navigation.navigate('Chat', { conversation: item, messages: conversationMessages, user});
+    navigation.navigate('Chat', { conversation: item, messages: conversationMessages, user, fetchData, setMessages, allMessages: messages});
   };
   
   return (
 
     <SafeAreaView  style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.title}>Your chats <Text style={styles.count}>({conversations.length})</Text></Text>
+        </View>
         <FlatList
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -56,5 +60,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
+    fontWeight: 700
   },
+  count: {
+    fontSize: 15
+  },
+  headerContainer: {
+    paddingBottom: 20,
+  }
 });
