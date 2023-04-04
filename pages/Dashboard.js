@@ -17,6 +17,7 @@ import TicketService from "../services/TicketService";
 import MessageService from "../services/messageService";
 import { useSelector, useDispatch } from "react-redux";
 import { setAllMessages, addMessage } from "../redux/messagesSlice";
+import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
 
 const Tab = createBottomTabNavigator();
 
@@ -95,28 +96,8 @@ export default function Dashboard({ navigation, route }) {
         conversation.user1.id === user.id ||
         conversation.user2.id === user.id
       ) {
+        dispatch(addMessageToSelectedConvo(new_record))
         dispatch(addMessage(new_record));
-
-        // setMessages((prev) => {
-        //   // Find the index of the current conversation in the allMessages array
-        //   const conversationIndex = prev.findIndex(
-        //     (msgArray) =>
-        //       msgArray.length > 0 &&
-        //       msgArray[0].conversation_id === conversation.id
-        //   );
-
-        //   // If the conversation is found, update the messages for that conversation
-        //   if (conversationIndex !== -1) {
-        //     const updatedMessages = [...prev];
-        //     updatedMessages[conversationIndex] = updatedMessages[
-        //       conversationIndex
-        //     ].concat([new_record]);
-        //     return updatedMessages;
-        //   } else {
-        //     // If the conversation is not found, add the new message to the allMessages array
-        //     return [...prev, [new_message]];
-        //   }
-        // });
       } else {
         console.log(
           "The message was not sent to you: ",
@@ -133,8 +114,8 @@ export default function Dashboard({ navigation, route }) {
   async function handleForumEvent(new_record, ownListings) {
     console.log("Inside handleForumEvent: ", new_record);
     // const new_record = payload.new;
-    console.log({ new_record });
-    console.log({ ownListings });
+    // console.log({ new_record });
+    // console.log({ ownListings });
     for (const listing of ownListings) {
       console.log({ listing });
       if (listing.forum == new_record.forum) {

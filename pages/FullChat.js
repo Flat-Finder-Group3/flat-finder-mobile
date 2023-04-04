@@ -17,12 +17,14 @@ import { useSelector, useDispatch } from "react-redux";
 import DirectMessage from "../components/DirectMessage";
 import { addMessage } from "../redux/messagesSlice";
 import MessageService from "../services/messageService";
+import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
 
 export default function FullChat({ navigation, route }) {
   const { conversation, fetchData } = route.params;
 
   const allMessages = useSelector((state) => state.allMessages);
   const user = useSelector((state) => state.user);
+  const convoMessages = useSelector((state) => state.selectedConvo)
 
   const [currentMessages, setCurrentMessages] = useState([]);
   const [previousState, setPreviousState] = useState(null);
@@ -40,14 +42,14 @@ export default function FullChat({ navigation, route }) {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    for (const exchanges of allMessages) {
-      if (exchanges[0].conversation_id === conversation.id) {
-        setCurrentMessages(exchanges);
-        break;
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   for (const exchanges of allMessages) {
+  //     if (exchanges[0].conversation_id === conversation.id) {
+  //       setCurrentMessages(exchanges);
+  //       break;
+  //     }
+  //   }
+  // }, []);
 
   const [refreshing, setRefreshing] = useState(false);
   const [content, setContent] = useState("");
@@ -72,6 +74,7 @@ export default function FullChat({ navigation, route }) {
       console.log("Message we got back: ", new_message);
       setCurrentMessages((prev) => prev.concat([new_message]));
       setPreviousState(allMessages);
+      dispatch(addMessageToSelectedConvo(new_message))
       dispatch(addMessage(new_message));
       // setMessages((prev) => {
       //   // Find the index of the current conversation in the allMessages array
@@ -116,7 +119,7 @@ export default function FullChat({ navigation, route }) {
         renderItem={({ item }) => (
           <DirectMessage item={item} user={user} conversation={conversation} />
         )}
-        data={currentMessages}
+        data={convoMessages}
         keyExtractor={(item) => item.id}
       />
       <KeyboardAvoidingView
