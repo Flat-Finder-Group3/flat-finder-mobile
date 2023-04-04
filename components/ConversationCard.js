@@ -25,7 +25,6 @@ export default function ConversationCard({
     .join("");
   const avatarSize = 80;
   const gradientColors = ["#FF6B92", "#4c669f"];
-
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={globalStyles.outline}>
@@ -40,7 +39,7 @@ export default function ConversationCard({
         )}
         <View style={{ flex: 1 }}>
           <Text style={globalStyles.userName}>{otherUser.name}</Text>
-          <Text>This is our last message!</Text>
+          <Text>{item.id}</Text>
         </View>
       </View>
     </TouchableOpacity>

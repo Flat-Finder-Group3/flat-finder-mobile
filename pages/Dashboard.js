@@ -237,6 +237,7 @@ export default function Dashboard({ navigation, route }) {
             {...props}
             user={user}
             tickets={tickets}
+            setTickets={setTickets}
             ownListings={ownListings}
             favListings={favListings}
             loading={loading}
