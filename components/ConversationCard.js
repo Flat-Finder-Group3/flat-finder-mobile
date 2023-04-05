@@ -24,6 +24,7 @@ export default function ConversationCard({
   const allMessages = useSelector(state => state.allMessages);
   const [lastMessage, setLastMessage] = useState('');
   const [convoIndex, setConvoIndex] = useState(null);
+  const [badgeCount, setBadgeCount] = useState(0);
 
   useEffect(() => {
     const conversationIndex = allMessages.findIndex(
@@ -44,7 +45,11 @@ export default function ConversationCard({
   const gradientColors = ["#FF6B92", "#4c669f"];
 
   useEffect(() => {
-    convoIndex !== null && setLastMessage(allMessages[convoIndex][allMessages[convoIndex].length - 1])
+    if (convoIndex !== null){
+      setLastMessage(allMessages[convoIndex][allMessages[convoIndex].length - 1])
+      const count = allMessages[convoIndex].filter((message) => !message.is_read).length
+      setBadgeCount(count)
+    }
   }, [allMessages, convoIndex])
 
 
@@ -53,6 +58,9 @@ export default function ConversationCard({
   }, [])
 
 
+  function getBadgeCount() {
+    return convoIndex !== null && allMessages[convoIndex].filter((message) => !message.is_read).length
+  }
 
 
   return (
@@ -71,7 +79,7 @@ export default function ConversationCard({
           <Text style={globalStyles.userName}>{otherUser.name}</Text>
           <Text>{lastMessage.sender_id === otherUser.id ? otherUser.name.split(' ')[0] : 'You'}: {lastMessage.content}</Text>
         </View>
-        <Badge style={{alignSelf: 'center'}}>{convoIndex !== null && allMessages[convoIndex].filter((message) => !message.is_read).length}</Badge>
+        {badgeCount ? <Badge style={{alignSelf: 'center'}}>{badgeCount}</Badge> : <></>}
       </View>
     </TouchableOpacity>
   );
