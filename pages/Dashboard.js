@@ -18,11 +18,14 @@ import MessageService from "../services/messageService";
 import { useSelector, useDispatch } from "react-redux";
 import { setAllMessages, addMessage, readMessage } from "../redux/messagesSlice";
 import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
+import { Badge } from "react-native-paper";
 
 const Tab = createBottomTabNavigator();
 
 export default function Dashboard({ navigation, route }) {
-  const user = route.params.user;
+
+  const user = useSelector(state => state.user)
+  const allMessages = useSelector(state => state.allMessages)
 
   const [listings, setListings] = useState([]);
   const [favListings, setFavListings] = useState([]);
@@ -31,11 +34,13 @@ export default function Dashboard({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [badgeCount, setBadgeCount] = useState(0);
 
   const userRef = useRef(user);
   const ownListingsRef = useRef(ownListings);
 
   const dispatch = useDispatch();
+
 
   const userService = new UserService();
   const listingService = new ListingService();
@@ -90,7 +95,6 @@ export default function Dashboard({ navigation, route }) {
     //if we sent the message, don't notify!
     if (new_record.sender_id !== user.id) {
       const conversation = await messageService.getConversationById(new_record.conversation_id);
-      // console.log("Here is the user state var: " , {user})
       if (conversation.user1.id === user.id || conversation.user2.id === user.id) {
         if (eventType === 'UPDATE'){
           dispatch(readMessage(new_record))
@@ -153,12 +157,35 @@ export default function Dashboard({ navigation, route }) {
   }, [supabase]);
 
   useEffect(() => {
-    console.log({ ownListings, tickets, listings });
-  }, [ownListings, tickets, listings]);
+    let count = 0;
+    for (const conversations of allMessages){
+      for (const message of conversations){
+        if (message.sender_id !== user.id && !message.is_read){
+          count++
+        }
+      }
+    }
+    setBadgeCount(count)
+  }, [allMessages])
+  function getBadgeCount() {
+    let count = 0;
+    for (const convesations of allMessages){
+      for (const message of allMessages){
+        if (!message.is_read){
+          count++
+        }
+      }
+    }
+    return count
+  }
 
-  useEffect(() => {
-    console.log("User inside dashboard! ", user);
-  }, []);
+  // useEffect(() => {
+  //   console.log({ ownListings, tickets, listings });
+  // }, [ownListings, tickets, listings]);
+
+  // useEffect(() => {
+  //   console.log("User inside dashboard! ", user);
+  // }, []);
 
   return (
     <Tab.Navigator
@@ -211,7 +238,6 @@ export default function Dashboard({ navigation, route }) {
         children={(props) => (
           <Home
             {...props}
-            user={user}
             tickets={tickets}
             setTickets={setTickets}
             ownListings={ownListings}
@@ -232,7 +258,6 @@ export default function Dashboard({ navigation, route }) {
         children={(props) => (
           <Search
             {...props}
-            user={user}
             listings={listings}
             loading={loading}
             fetchData={fetchData}
@@ -250,7 +275,6 @@ export default function Dashboard({ navigation, route }) {
         children={(props) => (
           <Inbox
             {...props}
-            user={user}
             conversations={conversations}
             messages={messages}
             loading={loading}
@@ -261,14 +285,18 @@ export default function Dashboard({ navigation, route }) {
         options={{
           tabBarLabel: "Inbox",
           tabBarIcon: ({ color, size }) => {
-            return <Icon name="inbox" size={size} color={color} />;
+            return (
+              <View>
+                {badgeCount ? <Badge size={12} style={{position: 'absolute', zIndex: '2'}}>{badgeCount}</Badge> : <></>}
+                <Icon name="inbox" size={size} color={color} />
+              </View>
+            )
           },
         }}
       />
       <Tab.Screen
         name="Account"
         component={Account}
-        initialParams={{ user }}
         options={{
           tabBarLabel: "Account",
           tabBarIcon: ({ color, size }) => {

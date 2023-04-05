@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 export default function Account({ navigation, route }) {
-  // const user = route.params.user
 
   const user = useSelector((state) => state.user);
 

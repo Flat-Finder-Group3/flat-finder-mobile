@@ -41,7 +41,6 @@ export default function SignIn({ navigation }) {
           routes: [
             {
               name: "Dashboard",
-              params: { user: user },
             },
           ],
         })
