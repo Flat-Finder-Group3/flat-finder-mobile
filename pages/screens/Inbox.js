@@ -17,7 +17,6 @@ import { setSelectedConvo } from "../../redux/selectedConvoSlice";
 
 export default function Inbox({
   navigation,
-  user,
   conversations,
   loading,
   fetchData,
