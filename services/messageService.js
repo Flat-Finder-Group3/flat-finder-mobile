@@ -59,4 +59,23 @@ export default class MessageService {
         return response
     }
 
+
+    async readMessage(message_id){
+        const response = await fetch(`${this.url}/message`, {
+            method: "PUT",
+            headers:{
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                message_id
+            })
+        })
+
+        if (response.ok){
+            const result = await response.json()
+            return result
+        }
+        return response
+    }
+
 }

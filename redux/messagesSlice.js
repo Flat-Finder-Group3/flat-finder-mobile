@@ -10,6 +10,23 @@ const messages = createSlice({
       state = action.payload;
       return state;
     },
+    readMessage(state, action){
+      console.log(
+        "🟢🟢🟢🟢🟢🟢🟢🟢 PAYLOAD IN READ MESSAGE YOOO MESSAGE YO 🟢🟢🟢🟢🟢🟢🟢🟢",
+        action.payload
+      );
+      const conversationIndex = state.findIndex(
+        (conversation) =>
+          conversation.length > 0 &&
+          conversation[0].conversation_id === action.payload.conversation_id
+      );
+      if (conversationIndex !== -1) {
+        const messageIndex = state[conversationIndex].findIndex((message) => message.id === action.payload.id)
+        state[conversationIndex][messageIndex] = action.payload;
+        return state
+      }
+
+    },
     addMessage(state, action) {
       console.log(
         "🟢🟢🟢🟢🟢🟢🟢🟢 PAYLOAD IN ADD MESSAGE YO 🟢🟢🟢🟢🟢🟢🟢🟢",
@@ -34,5 +51,5 @@ const messages = createSlice({
   },
 });
 
-export const { setAllMessages, addMessage } = messages.actions;
+export const { setAllMessages, addMessage, readMessage } = messages.actions;
 export default messages.reducer;

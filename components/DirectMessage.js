@@ -12,13 +12,13 @@ import GradientAvatar from "./GradientAvatar";
 import { TouchableOpacity } from "react-native";
 
 export default function DirectMessage({ item, conversation, user }) {
-  console.log("Item in direct message: ", item);
-  console.log(item.content);
+  // console.log("Item in direct message: ", item);
+  // console.log(item.content);
   const lastMessage =
     item.content[item.content.length - 1][
       item.content[item.content.length - 1].length - 1
     ];
-  console.log(lastMessage);
+  // console.log(lastMessage);
 
   const author =
     item.sender_id === user.id

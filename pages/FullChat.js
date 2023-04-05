@@ -15,14 +15,17 @@ import { Button, Icon } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector, useDispatch } from "react-redux";
 import DirectMessage from "../components/DirectMessage";
-import { addMessage } from "../redux/messagesSlice";
+import { addMessage, readMessage } from "../redux/messagesSlice";
 import MessageService from "../services/messageService";
+import { messageService } from "../services/Instances";
+import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
 
 export default function FullChat({ navigation, route }) {
   const { conversation, fetchData } = route.params;
 
   const allMessages = useSelector((state) => state.allMessages);
   const user = useSelector((state) => state.user);
+  const convoMessages = useSelector((state) => state.selectedConvo)
 
   const [currentMessages, setCurrentMessages] = useState([]);
   const [previousState, setPreviousState] = useState(null);
@@ -41,13 +44,18 @@ export default function FullChat({ navigation, route }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    for (const exchanges of allMessages) {
-      if (exchanges[0].conversation_id === conversation.id) {
-        setCurrentMessages(exchanges);
-        break;
-      }
-    }
-  }, []);
+    //add implementation
+    (async () => {
+
+      const toReadMessages = convoMessages.filter((message) => message.sender_id !== user.id && !message.is_read)
+      
+      const result = await Promise.all(toReadMessages.map(message => {
+         return messageService.readMessage(message.id)
+      }))
+      result.forEach((new_message) => dispatch(readMessage(new_message)))
+    })()
+      
+  }, [convoMessages])
 
   const [refreshing, setRefreshing] = useState(false);
   const [content, setContent] = useState("");
@@ -72,27 +80,8 @@ export default function FullChat({ navigation, route }) {
       console.log("Message we got back: ", new_message);
       setCurrentMessages((prev) => prev.concat([new_message]));
       setPreviousState(allMessages);
+      dispatch(addMessageToSelectedConvo(new_message))
       dispatch(addMessage(new_message));
-      // setMessages((prev) => {
-      //   // Find the index of the current conversation in the allMessages array
-      //   const conversationIndex = prev.findIndex(
-      //     (msgArray) =>
-      //       msgArray.length > 0 &&
-      //       msgArray[0].conversation_id === conversation.id
-      //   );
-
-      //   // If the conversation is found, update the messages for that conversation
-      //   if (conversationIndex !== -1) {
-      //     const updatedMessages = [...prev];
-      //     updatedMessages[conversationIndex] = updatedMessages[
-      //       conversationIndex
-      //     ].concat([new_message]);
-      //     return updatedMessages;
-      //   } else {
-      //     // If the conversation is not found, add the new message to the allMessages array
-      //     return [...prev, [new_message]];
-      //   }
-      // });
     }
   }
 
@@ -116,7 +105,7 @@ export default function FullChat({ navigation, route }) {
         renderItem={({ item }) => (
           <DirectMessage item={item} user={user} conversation={conversation} />
         )}
-        data={currentMessages}
+        data={convoMessages}
         keyExtractor={(item) => item.id}
       />
       <KeyboardAvoidingView
@@ -149,8 +138,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: StatusBar.currentHeight,
     marginHorizontal: 16,
-    borderWidth: 1,
-    borderColor: "red",
+    // borderWidth: 1,
+    // borderColor: "red",
     marginBottom: 40,
   },
   item: {

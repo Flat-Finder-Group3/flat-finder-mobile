@@ -16,12 +16,16 @@ import FavListingService from "../services/FavListingService";
 import TicketService from "../services/TicketService";
 import MessageService from "../services/messageService";
 import { useSelector, useDispatch } from "react-redux";
-import { setAllMessages, addMessage } from "../redux/messagesSlice";
+import { setAllMessages, addMessage, readMessage } from "../redux/messagesSlice";
+import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
+import { Badge } from "react-native-paper";
 
 const Tab = createBottomTabNavigator();
 
 export default function Dashboard({ navigation, route }) {
-  const user = route.params.user;
+
+  const user = useSelector(state => state.user)
+  const allMessages = useSelector(state => state.allMessages)
 
   const [listings, setListings] = useState([]);
   const [favListings, setFavListings] = useState([]);
@@ -30,11 +34,13 @@ export default function Dashboard({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [badgeCount, setBadgeCount] = useState(0);
 
   const userRef = useRef(user);
   const ownListingsRef = useRef(ownListings);
 
   const dispatch = useDispatch();
+
 
   const userService = new UserService();
   const listingService = new ListingService();
@@ -83,49 +89,23 @@ export default function Dashboard({ navigation, route }) {
     console.log("State changed 🟢🟢🟢");
   }, [messages]);
 
-  async function handleMessageEvent(new_record, user) {
-    //if we sent the message, don't notify!
+  async function handleMessageEvent(new_record, user, eventType) {
     console.log("NEW RECORDDDDD🟢🟢🟢🟢🟢🟢 ", new_record);
+
+    //if we sent the message, don't notify!
     if (new_record.sender_id !== user.id) {
-      const conversation = await messageService.getConversationById(
-        new_record.conversation_id
-      );
-      // console.log("Here is the user state var: " , {user})
-      if (
-        conversation.user1.id === user.id ||
-        conversation.user2.id === user.id
-      ) {
-        dispatch(addMessage(new_record));
-
-        // setMessages((prev) => {
-        //   // Find the index of the current conversation in the allMessages array
-        //   const conversationIndex = prev.findIndex(
-        //     (msgArray) =>
-        //       msgArray.length > 0 &&
-        //       msgArray[0].conversation_id === conversation.id
-        //   );
-
-        //   // If the conversation is found, update the messages for that conversation
-        //   if (conversationIndex !== -1) {
-        //     const updatedMessages = [...prev];
-        //     updatedMessages[conversationIndex] = updatedMessages[
-        //       conversationIndex
-        //     ].concat([new_record]);
-        //     return updatedMessages;
-        //   } else {
-        //     // If the conversation is not found, add the new message to the allMessages array
-        //     return [...prev, [new_message]];
-        //   }
-        // });
+      const conversation = await messageService.getConversationById(new_record.conversation_id);
+      if (conversation.user1.id === user.id || conversation.user2.id === user.id) {
+        if (eventType === 'UPDATE'){
+          dispatch(readMessage(new_record))
+        } else {
+          dispatch(addMessageToSelectedConvo(new_record))
+          dispatch(addMessage(new_record));
+        }
       } else {
         console.log(
-          "The message was not sent to you: ",
-          user.id,
-          " the conversation is between:",
-          conversation.user1.id,
-          " and ",
-          conversation.user2.id
-        );
+          "The message was not sent to you: ", user.id, " the conversation is between:",
+          conversation.user1.id," and ",conversation.user2.id);
       }
     }
   }
@@ -133,8 +113,8 @@ export default function Dashboard({ navigation, route }) {
   async function handleForumEvent(new_record, ownListings) {
     console.log("Inside handleForumEvent: ", new_record);
     // const new_record = payload.new;
-    console.log({ new_record });
-    console.log({ ownListings });
+    // console.log({ new_record });
+    // console.log({ ownListings });
     for (const listing of ownListings) {
       console.log({ listing });
       if (listing.forum == new_record.forum) {
@@ -147,13 +127,13 @@ export default function Dashboard({ navigation, route }) {
   }
 
   function handleRealtimeEvents(payload, user, ownListings) {
-    const [new_record, table] = [payload.new, payload.table];
+    const [new_record, table, eventType] = [payload.new, payload.table, payload.eventType];
     switch (table) {
       case "forum_post":
         handleForumEvent(new_record, ownListings);
         break;
       case "message":
-        handleMessageEvent(new_record, user);
+        handleMessageEvent(new_record, user, eventType);
         break;
       default:
         console.log(payload);
@@ -177,12 +157,35 @@ export default function Dashboard({ navigation, route }) {
   }, [supabase]);
 
   useEffect(() => {
-    console.log({ ownListings, tickets, listings });
-  }, [ownListings, tickets, listings]);
+    let count = 0;
+    for (const conversations of allMessages){
+      for (const message of conversations){
+        if (message.sender_id !== user.id && !message.is_read){
+          count++
+        }
+      }
+    }
+    setBadgeCount(count)
+  }, [allMessages])
+  function getBadgeCount() {
+    let count = 0;
+    for (const convesations of allMessages){
+      for (const message of allMessages){
+        if (!message.is_read){
+          count++
+        }
+      }
+    }
+    return count
+  }
 
-  useEffect(() => {
-    console.log("User inside dashboard! ", user);
-  }, []);
+  // useEffect(() => {
+  //   console.log({ ownListings, tickets, listings });
+  // }, [ownListings, tickets, listings]);
+
+  // useEffect(() => {
+  //   console.log("User inside dashboard! ", user);
+  // }, []);
 
   return (
     <Tab.Navigator
@@ -235,7 +238,6 @@ export default function Dashboard({ navigation, route }) {
         children={(props) => (
           <Home
             {...props}
-            user={user}
             tickets={tickets}
             setTickets={setTickets}
             ownListings={ownListings}
@@ -256,7 +258,6 @@ export default function Dashboard({ navigation, route }) {
         children={(props) => (
           <Search
             {...props}
-            user={user}
             listings={listings}
             loading={loading}
             fetchData={fetchData}
@@ -274,7 +275,6 @@ export default function Dashboard({ navigation, route }) {
         children={(props) => (
           <Inbox
             {...props}
-            user={user}
             conversations={conversations}
             messages={messages}
             loading={loading}
@@ -285,14 +285,18 @@ export default function Dashboard({ navigation, route }) {
         options={{
           tabBarLabel: "Inbox",
           tabBarIcon: ({ color, size }) => {
-            return <Icon name="inbox" size={size} color={color} />;
+            return (
+              <View>
+                {badgeCount ? <Badge size={12} style={{position: 'absolute', zIndex: 2}}>{badgeCount}</Badge> : <></>}
+                <Icon name="inbox" size={size} color={color} />
+              </View>
+            )
           },
         }}
       />
       <Tab.Screen
         name="Account"
         component={Account}
-        initialParams={{ user }}
         options={{
           tabBarLabel: "Account",
           tabBarIcon: ({ color, size }) => {

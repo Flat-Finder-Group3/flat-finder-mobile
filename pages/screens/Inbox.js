@@ -13,15 +13,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import ConversationCard from "../../components/ConversationCard";
 import { useSelector, useDispatch } from "react-redux";
+import { setSelectedConvo } from "../../redux/selectedConvoSlice";
 
 export default function Inbox({
   navigation,
-  user,
   conversations,
   loading,
   fetchData,
 }) {
   const allMessages = useSelector((state) => state.allMessages);
+  const dispatch = useDispatch();
 
   console.log("All messages in INBOX FROM REDUX 🟢🟢🟢: ", allMessages);
 
@@ -35,6 +36,13 @@ export default function Inbox({
 
   const handleConversationPress = (item) => {
     console.log("Here are the params to pass to FullChat component: ", item);
+    for (const exchanges of allMessages) {
+      if (exchanges[0].conversation_id === item.id) {
+        // setCurrentMessages(exchanges);
+        dispatch(setSelectedConvo(exchanges))
+        break;
+      }
+    }
     navigation.navigate("Chat", {
       conversation: item,
       fetchData,
