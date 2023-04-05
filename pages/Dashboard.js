@@ -287,7 +287,7 @@ export default function Dashboard({ navigation, route }) {
           tabBarIcon: ({ color, size }) => {
             return (
               <View>
-                {badgeCount ? <Badge size={12} style={{position: 'absolute', zIndex: '2'}}>{badgeCount}</Badge> : <></>}
+                {badgeCount ? <Badge size={12} style={{position: 'absolute', zIndex: 2}}>{badgeCount}</Badge> : <></>}
                 <Icon name="inbox" size={size} color={color} />
               </View>
             )

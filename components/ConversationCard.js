@@ -13,6 +13,7 @@ import { TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { Badge } from 'react-native-paper';
+import { userAgent } from "@googlemaps/google-maps-services-js";
 
 export default function ConversationCard({
   item,
@@ -47,7 +48,7 @@ export default function ConversationCard({
   useEffect(() => {
     if (convoIndex !== null){
       setLastMessage(allMessages[convoIndex][allMessages[convoIndex].length - 1])
-      const count = allMessages[convoIndex].filter((message) => !message.is_read).length
+      const count = allMessages[convoIndex].filter((message) => message.sender_id === otherUser.id && !message.is_read).length
       setBadgeCount(count)
     }
   }, [allMessages, convoIndex])
