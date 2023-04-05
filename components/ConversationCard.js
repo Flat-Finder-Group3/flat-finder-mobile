@@ -10,6 +10,8 @@ import {
 import { Avatar } from "react-native-paper";
 import GradientAvatar from "./GradientAvatar";
 import { TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 
 export default function ConversationCard({
   item,
@@ -18,6 +20,10 @@ export default function ConversationCard({
   onPress,
 }) {
   // console.log("Item in convesation card: ", item)
+
+  const allMessages = useSelector(state => state.allMessages);
+  const [lastMessage, setLastMessage] = useState('');
+
   const otherUser = item.user1.email ? item.user1 : item.user2;
   const initials = otherUser.name
     .split(" ")
@@ -25,6 +31,21 @@ export default function ConversationCard({
     .join("");
   const avatarSize = 80;
   const gradientColors = ["#FF6B92", "#4c669f"];
+
+  useEffect(() => {
+    const conversationIndex = allMessages.findIndex(
+      (conversation) =>
+        conversation.length > 0 &&
+        conversation[0].conversation_id === item.id
+    );
+    console.log('Here is the conversation index: ', conversationIndex)
+    setLastMessage(allMessages[conversationIndex][allMessages[conversationIndex].length - 1])
+  }, [allMessages])
+
+
+
+
+
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={globalStyles.outline}>
@@ -39,7 +60,7 @@ export default function ConversationCard({
         )}
         <View style={{ flex: 1 }}>
           <Text style={globalStyles.userName}>{otherUser.name}</Text>
-          <Text>{item.id}</Text>
+          <Text>{lastMessage.sender_id === otherUser.id ? otherUser.name.split(' ')[0] : 'You'}: {lastMessage.content}</Text>
         </View>
       </View>
     </TouchableOpacity>

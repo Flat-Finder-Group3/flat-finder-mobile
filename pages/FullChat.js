@@ -76,26 +76,6 @@ export default function FullChat({ navigation, route }) {
       setPreviousState(allMessages);
       dispatch(addMessageToSelectedConvo(new_message))
       dispatch(addMessage(new_message));
-      // setMessages((prev) => {
-      //   // Find the index of the current conversation in the allMessages array
-      //   const conversationIndex = prev.findIndex(
-      //     (msgArray) =>
-      //       msgArray.length > 0 &&
-      //       msgArray[0].conversation_id === conversation.id
-      //   );
-
-      //   // If the conversation is found, update the messages for that conversation
-      //   if (conversationIndex !== -1) {
-      //     const updatedMessages = [...prev];
-      //     updatedMessages[conversationIndex] = updatedMessages[
-      //       conversationIndex
-      //     ].concat([new_message]);
-      //     return updatedMessages;
-      //   } else {
-      //     // If the conversation is not found, add the new message to the allMessages array
-      //     return [...prev, [new_message]];
-      //   }
-      // });
     }
   }
 
