@@ -15,8 +15,9 @@ import { Button, Icon } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector, useDispatch } from "react-redux";
 import DirectMessage from "../components/DirectMessage";
-import { addMessage } from "../redux/messagesSlice";
+import { addMessage, readMessage } from "../redux/messagesSlice";
 import MessageService from "../services/messageService";
+import { messageService } from "../services/Instances";
 import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
 
 export default function FullChat({ navigation, route }) {
@@ -42,14 +43,19 @@ export default function FullChat({ navigation, route }) {
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   for (const exchanges of allMessages) {
-  //     if (exchanges[0].conversation_id === conversation.id) {
-  //       setCurrentMessages(exchanges);
-  //       break;
-  //     }
-  //   }
-  // }, []);
+  useEffect(() => {
+    //add implementation
+    (async () => {
+
+      const toReadMessages = convoMessages.filter((message) => message.sender_id !== user.id && !message.is_read)
+      
+      const result = await Promise.all(toReadMessages.map(message => {
+         return messageService.readMessage(message.id)
+      }))
+      result.forEach((new_message) => dispatch(readMessage(new_message)))
+    })()
+      
+  }, [convoMessages])
 
   const [refreshing, setRefreshing] = useState(false);
   const [content, setContent] = useState("");

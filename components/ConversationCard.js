@@ -12,17 +12,29 @@ import GradientAvatar from "./GradientAvatar";
 import { TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
+import { Badge } from 'react-native-paper';
 
 export default function ConversationCard({
   item,
   navigation,
-  messages,
   onPress,
 }) {
   // console.log("Item in convesation card: ", item)
 
   const allMessages = useSelector(state => state.allMessages);
   const [lastMessage, setLastMessage] = useState('');
+  const [convoIndex, setConvoIndex] = useState(null);
+  const [badgeCount, setBadgeCount] = useState(0);
+
+  useEffect(() => {
+    const conversationIndex = allMessages.findIndex(
+      (conversation) =>
+        conversation.length > 0 &&
+        conversation[0].conversation_id === item.id
+    );
+    console.log('Here is the conversation index: ', conversationIndex)
+    setConvoIndex(conversationIndex)
+  }, [])
 
   const otherUser = item.user1.email ? item.user1 : item.user2;
   const initials = otherUser.name
@@ -33,17 +45,22 @@ export default function ConversationCard({
   const gradientColors = ["#FF6B92", "#4c669f"];
 
   useEffect(() => {
-    const conversationIndex = allMessages.findIndex(
-      (conversation) =>
-        conversation.length > 0 &&
-        conversation[0].conversation_id === item.id
-    );
-    console.log('Here is the conversation index: ', conversationIndex)
-    setLastMessage(allMessages[conversationIndex][allMessages[conversationIndex].length - 1])
-  }, [allMessages])
+    if (convoIndex !== null){
+      setLastMessage(allMessages[convoIndex][allMessages[convoIndex].length - 1])
+      const count = allMessages[convoIndex].filter((message) => !message.is_read).length
+      setBadgeCount(count)
+    }
+  }, [allMessages, convoIndex])
 
 
+  useEffect(() => {
+    console.log('Last MESSAGE: ⚡️⚡️⚡️⚡️⚡️🔴🔴', lastMessage)
+  }, [])
 
+
+  function getBadgeCount() {
+    return convoIndex !== null && allMessages[convoIndex].filter((message) => !message.is_read).length
+  }
 
 
   return (
@@ -62,6 +79,7 @@ export default function ConversationCard({
           <Text style={globalStyles.userName}>{otherUser.name}</Text>
           <Text>{lastMessage.sender_id === otherUser.id ? otherUser.name.split(' ')[0] : 'You'}: {lastMessage.content}</Text>
         </View>
+        {badgeCount ? <Badge style={{alignSelf: 'center'}}>{badgeCount}</Badge> : <></>}
       </View>
     </TouchableOpacity>
   );
@@ -74,6 +92,7 @@ const globalStyles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
+    justifyContent: 'center',
     marginBottom: 10,
   },
   container: {
