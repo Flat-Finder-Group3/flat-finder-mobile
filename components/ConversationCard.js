@@ -38,6 +38,7 @@ export default function ConversationCard({
   }, [])
 
   const otherUser = item.user1.email ? item.user1 : item.user2;
+  
   const initials = otherUser.name
     .split(" ")
     .map((part) => part[0])
