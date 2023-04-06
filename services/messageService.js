@@ -64,14 +64,15 @@ export default class MessageService {
     return response;
   }
 
-  async readMessage(message) {
+  async readMessage(message_id, conversation_id) {
     const response = await fetch(`${this.url}/message`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        message,
+        message_id,
+        conversation_id,
       }),
     });
 
