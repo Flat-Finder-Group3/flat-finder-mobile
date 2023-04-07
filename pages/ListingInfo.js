@@ -21,23 +21,30 @@ export default function ListingInfo({ item, navigation, route }) {
   console.log("User in account! ", user);
   return (
     <>
-      <Title>{listing.title}</Title>
+      <Title style={{ textAlign: "center" }}>{listing.title}</Title>
       <View>
         <ScrollView
           pagingEnabled
           horizontal
-          style={{ width, height, marginTop: "-50%" }}
+          style={{ width, height, marginTop: "-40%", borderRadius: 40 }}
         >
           {listing.images.map((image, index) => (
             <Image
               key={index}
               source={{ uri: image }}
-              style={{ width, height, resizeMode: "contain" }}
+              style={{
+                width,
+                height,
+                resizeMode: "contain",
+                borderRadius: 40,
+              }}
             />
           ))}
         </ScrollView>
-        <Title style={{ marginTop: "-50%" }}>Extra information</Title>
       </View>
+      <Title style={{ marginTop: "-40%", textAlign: "center" }}>
+        Extra information
+      </Title>
       <ScrollView>
         <DataTable>
           <DataTable.Row>
@@ -79,8 +86,8 @@ export default function ListingInfo({ item, navigation, route }) {
             </DataTable.Cell>
           </DataTable.Row>
 
-          <Title>Description</Title>
-          <Text>{listing.description}</Text>
+          <Title style={{ marginLeft: "4%" }}>Description</Title>
+          <Text style={{ marginLeft: "4%" }}>{listing.description}</Text>
           <Map coordinates={[listing.coordinates]} />
         </DataTable>
       </ScrollView>
