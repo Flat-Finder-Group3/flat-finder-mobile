@@ -84,4 +84,23 @@ export default class MessageService {
     }
     return response;
   }
+
+  async readUserMessages(sender_id, conversation_id) {
+    console.log('Sender and conversation id in service', sender_id,conversation_id)
+    const response = await fetch(`${this.url}/messages`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sender_id,
+        conversation_id,
+      }),
+    });
+
+    // console.log("✨✨✨✨✨Here is the RESPONSE: ", response);
+      const result = await response.json();
+      // console.log("✨✨✨✨✨Here is the RESULT OF READING: ", result);
+      return result;
+  }
 }
