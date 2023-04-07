@@ -19,6 +19,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setAllMessages, addMessage, readMessage } from "../redux/messagesSlice";
 import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
 import { Badge } from "react-native-paper";
+import { addMessageToForumPosts } from "../redux/selectedForumPostsSlice";
 
 const Tab = createBottomTabNavigator();
 
@@ -26,6 +27,7 @@ export default function Dashboard({ navigation, route }) {
 
   const user = useSelector(state => state.user)
   const allMessages = useSelector(state => state.allMessages)
+  const selectedListing = useSelector(state => state.selectedListing)
 
   const [listings, setListings] = useState([]);
   const [favListings, setFavListings] = useState([]);
@@ -38,6 +40,7 @@ export default function Dashboard({ navigation, route }) {
 
   const userRef = useRef(user);
   const ownListingsRef = useRef(ownListings);
+  const selectedListingRef = useRef(selectedListing);
 
   const dispatch = useDispatch();
 
@@ -83,7 +86,8 @@ export default function Dashboard({ navigation, route }) {
   useEffect(() => {
     userRef.current = user;
     ownListingsRef.current = ownListings;
-  }, [user, ownListings]);
+    selectedListingRef.current = selectedListing
+  }, [user, ownListings, selectedListing]);
 
   useEffect(() => {
     console.log("State changed 🟢🟢🟢");
@@ -110,11 +114,17 @@ export default function Dashboard({ navigation, route }) {
     }
   }
 
-  async function handleForumEvent(new_record, ownListings) {
+  async function handleForumEvent(new_record, ownListings, selectedListing, eventType) {
     console.log("Inside handleForumEvent: ", new_record);
     // const new_record = payload.new;
     // console.log({ new_record });
     // console.log({ ownListings });
+    console.log("Comparing the forums:::::::::::" , new_record.forum, selectedListing.forum)
+    if (new_record.forum === selectedListing.forum){
+      const user = await userService.getUserById(new_record.author);
+      new_record.author = user;
+      dispatch(addMessageToForumPosts(new_record))
+    }
     for (const listing of ownListings) {
       console.log({ listing });
       if (listing.forum == new_record.forum) {
@@ -126,11 +136,11 @@ export default function Dashboard({ navigation, route }) {
     }
   }
 
-  function handleRealtimeEvents(payload, user, ownListings) {
+  function handleRealtimeEvents(payload, user, ownListings, selectedListing) {
     const [new_record, table, eventType] = [payload.new, payload.table, payload.eventType];
     switch (table) {
       case "forum_post":
-        handleForumEvent(new_record, ownListings);
+        handleForumEvent(new_record, ownListings, selectedListing, eventType);
         break;
       case "message":
         handleMessageEvent(new_record, user, eventType);
@@ -151,7 +161,7 @@ export default function Dashboard({ navigation, route }) {
           schema: "public",
         },
         (payload) =>
-          handleRealtimeEvents(payload, userRef.current, ownListingsRef.current)
+          handleRealtimeEvents(payload, userRef.current, ownListingsRef.current, selectedListingRef.current)
       )
       .subscribe();
   }, [supabase]);
