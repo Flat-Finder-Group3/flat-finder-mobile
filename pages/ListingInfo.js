@@ -3,7 +3,7 @@ import { CommonActions } from "@react-navigation/native";
 import * as React from "react";
 import { DataTable, Title } from "react-native-paper";
 import { View, StyleSheet, Button, StatusBar, SectionList, SafeAreaView,   RefreshControl, } from "react-native";
-import { Text, BottomNavigation } from "react-native-paper";
+import { Text, Snackbar } from "react-native-paper";
 // import { styles } from "../styles";
 import { Image, ScrollView, Dimensions } from "react-native";
 import { useState, useEffect, useRef} from "react";
@@ -13,6 +13,7 @@ import Map from "../components/Map";
 import { forumPostService } from "../services/Instances";
 import { setSelectedForumPosts } from "../redux/selectedForumPostsSlice";
 import ForumPost from "../components/ForumPost";
+import { setSnackBarVisibility } from "../redux/snackBarSlice";
 
 
 
@@ -22,6 +23,7 @@ export default function ListingInfo({ item, navigation, route }) {
   const user = useSelector((state) => state.user);
   const listing = useSelector((state) => state.selectedListing);
   const forumPosts = useSelector((state) => state.selectedForumPosts);
+  const visible = useSelector(state => state.snackBar)
 
   const dispatch = useDispatch();
   console.log("LISTING INSIDE LISTING YO:", listing);
@@ -29,17 +31,7 @@ export default function ListingInfo({ item, navigation, route }) {
   const height = (width * 100) / 60;
   console.log("User in account! ", user);
 
-  const sectionListRef = useRef();
-
-  useEffect(() => {
-    if (sectionListRef.current) {
-      sectionListRef.current.scrollToLocation({
-        animated: true,
-        sectionIndex: DATA.length - 1,
-        itemIndex: forumPosts.length - 1,
-      });
-    }
-  }, [forumPosts]);
+  // const sectionListRef = useRef();
   
 
   useEffect(() => {
@@ -68,7 +60,6 @@ export default function ListingInfo({ item, navigation, route }) {
   return (
     <SafeAreaView style={styles.container}>
     <SectionList
-    ref={sectionListRef}
         sections={DATA}
         keyExtractor={(item, index) => item + index}
         // refreshControl={
@@ -163,6 +154,17 @@ export default function ListingInfo({ item, navigation, route }) {
           <Text style={styles.header}>{title}</Text>
         )}
       />
+      <Snackbar
+        visible={visible}
+        onDismiss={() => dispatch(setSnackBarVisibility((false)))}
+        action={{
+          label: 'Undo',
+          onPress: () => {
+            dispatch(setSnackBarVisibility(false))
+          },
+        }}>
+        There is a new forum post on this listing.
+      </Snackbar>
       </SafeAreaView>
   )
 

@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, Button, StatusBar } from "react-native";
 import { supabase } from "../utils/supabase";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text, BottomNavigation } from "react-native-paper";
+import { Text, BottomNavigation, Snackbar } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { CommonActions } from "@react-navigation/native";
 import Search from "./screens/Search";
@@ -20,6 +20,7 @@ import { setAllMessages, addMessage, readMessage } from "../redux/messagesSlice"
 import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
 import { Badge } from "react-native-paper";
 import { addMessageToForumPosts } from "../redux/selectedForumPostsSlice";
+import { setSnackBarVisibility } from "../redux/snackBarSlice";
 
 const Tab = createBottomTabNavigator();
 
@@ -28,6 +29,8 @@ export default function Dashboard({ navigation, route }) {
   const user = useSelector(state => state.user)
   const allMessages = useSelector(state => state.allMessages)
   const selectedListing = useSelector(state => state.selectedListing)
+
+  
 
   const [listings, setListings] = useState([]);
   const [favListings, setFavListings] = useState([]);
@@ -124,6 +127,8 @@ export default function Dashboard({ navigation, route }) {
       const user = await userService.getUserById(new_record.author);
       new_record.author = user;
       dispatch(addMessageToForumPosts(new_record))
+      // setVisible(true)
+      dispatch(setSnackBarVisibility(true))
     }
     for (const listing of ownListings) {
       console.log({ listing });
@@ -198,6 +203,7 @@ export default function Dashboard({ navigation, route }) {
   // }, []);
 
   return (
+    <>
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
@@ -315,6 +321,7 @@ export default function Dashboard({ navigation, route }) {
         }}
       />
     </Tab.Navigator>
+    </>
   );
 }
 

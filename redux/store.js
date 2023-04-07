@@ -4,6 +4,7 @@ import userReducer from "./userSlice";
 import selectedListingSlice from "./selectedListingSlice";
 import selectedConvoSlice from "./selectedConvoSlice";
 import selectedForumPostsSlice from "./selectedForumPostsSlice";
+import snackBarSlice from "./snackBarSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     allMessages: messagesReducer,
     selectedListing: selectedListingSlice,
     selectedConvo: selectedConvoSlice,
-    selectedForumPosts: selectedForumPostsSlice
+    selectedForumPosts: selectedForumPostsSlice,
+    snackBar: snackBarSlice
   },
 });
