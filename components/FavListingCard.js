@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Image, ScrollView, Dimensions } from "react-native";
+import { Text, BottomNavigation, Button, Card } from "react-native-paper";
 
 export default function FavListing({ item }) {
   const { width } = Dimensions.get("window");
