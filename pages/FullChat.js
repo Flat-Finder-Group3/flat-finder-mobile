@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   TextInput,
@@ -17,11 +17,13 @@ import { useSelector, useDispatch } from "react-redux";
 import DirectMessage from "../components/DirectMessage";
 import { addMessage, readConversation } from "../redux/messagesSlice";
 import MessageService from "../services/messageService";
-import { messageService } from "../services/Instances";
+// import { messageService } from "../services/Instances";
 import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
 
 export default function FullChat({ navigation, route }) {
   const { conversation, fetchData } = route.params;
+
+  const messageService = new MessageService()
 
   const allMessages = useSelector((state) => state.allMessages);
   const user = useSelector((state) => state.user);
@@ -33,36 +35,33 @@ export default function FullChat({ navigation, route }) {
     if (convoMessages.length === 0) {
       return;
     }
+    let sender_id = null;
+
     const toReadMessages = convoMessages.reduce((result, message) => {
       if (message.sender_id !== user.id && !message.is_read) {
+        sender_id = message.sender_id 
         result.push(message.id);
       }
       return result;
     }, []);
 
+    
+    console.log("TO READ MESSAGES ! ", toReadMessages);
+    console.log("CONV. ID: ", convoMessages[0].conversation_id);
+    if (toReadMessages.length){
+      try {
+        const result = messageService.readUserMessages(sender_id, convoMessages[0].conversation_id).catch(error => console.log(error))
+        console.log('Result or reading! ', result)
+      } catch (e) {
+        console.log('Error reading: ', e)
+      }
+    }
     dispatch(
       readConversation({
         conversation_id: convoMessages[0].conversation_id,
         toReadMessages,
       })
     );
-
-    console.log("TO READ MESSAGES ! ", toReadMessages);
-    console.log("CONV. ID: ", convoMessages[0].conversation_id);
-    if (toReadMessages.length){
-      try {
-        await Promise.all(
-          toReadMessages.map((message_id) => {
-            return messageService.readMessage(
-              message_id,
-              convoMessages[0].conversation_id
-              ).catch(error => console.log(error))
-            })
-            ).catch((error) => console.log(error));
-          } catch (e) {
-            console.log("ERrorrrrroorrrr", e);
-          }
-    }
   }
 
   // useEffect(() => {
@@ -70,7 +69,9 @@ export default function FullChat({ navigation, route }) {
   // }, [convoMessages]);
 
   useEffect(() => {
-    readMessages();
+    (async () => {
+      await readMessages();
+    })()
   }, []);
 
   const [refreshing, setRefreshing] = useState(false);
