@@ -15,7 +15,7 @@ import { Button, Icon } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector, useDispatch } from "react-redux";
 import DirectMessage from "../components/DirectMessage";
-import { addMessage, readMessage } from "../redux/messagesSlice";
+import { addMessage, readConversation } from "../redux/messagesSlice";
 import MessageService from "../services/messageService";
 import { messageService } from "../services/Instances";
 import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
@@ -25,43 +25,59 @@ export default function FullChat({ navigation, route }) {
 
   const allMessages = useSelector((state) => state.allMessages);
   const user = useSelector((state) => state.user);
-  const convoMessages = useSelector((state) => state.selectedConvo)
-
-  const [currentMessages, setCurrentMessages] = useState([]);
-  const [previousState, setPreviousState] = useState(null);
-
-  useEffect(() => {
-    console.log("Current messages change 🟢🟢: ", currentMessages);
-  }, [currentMessages]);
-
-  useEffect(() => {
-    if (previousState) {
-      console.log("Here is previous state:🟢🟢🟢🟢", previousState);
-      console.log("Here is the new state:🟢🟢🟢🟢 ", allMessages);
-    }
-  }, [allMessages, previousState]);
+  const convoMessages = useSelector((state) => state.selectedConvo);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    //add implementation
-    (async () => {
+  async function readMessages() {
+    if (convoMessages.length === 0) {
+      return;
+    }
+    const toReadMessages = convoMessages.reduce((result, message) => {
+      if (message.sender_id !== user.id && !message.is_read) {
+        result.push(message.id);
+      }
+      return result;
+    }, []);
 
-      const toReadMessages = convoMessages.filter((message) => message.sender_id !== user.id && !message.is_read)
-      
-      const result = await Promise.all(toReadMessages.map(message => {
-         return messageService.readMessage(message.id)
-      }))
-      result.forEach((new_message) => dispatch(readMessage(new_message)))
-    })()
-      
-  }, [convoMessages])
+    dispatch(
+      readConversation({
+        conversation_id: convoMessages[0].conversation_id,
+        toReadMessages,
+      })
+    );
+
+    console.log("TO READ MESSAGES ! ", toReadMessages);
+    console.log("CONV. ID: ", convoMessages[0].conversation_id);
+    if (toReadMessages.length){
+      try {
+        await Promise.all(
+          toReadMessages.map((message_id) => {
+            return messageService.readMessage(
+              message_id,
+              convoMessages[0].conversation_id
+              ).catch(error => console.log(error))
+            })
+            ).catch((error) => console.log(error));
+          } catch (e) {
+            console.log("ERrorrrrroorrrr", e);
+          }
+    }
+  }
+
+  // useEffect(() => {
+  //   readMessages();
+  // }, [convoMessages]);
+
+  useEffect(() => {
+    readMessages();
+  }, []);
 
   const [refreshing, setRefreshing] = useState(false);
   const [content, setContent] = useState("");
 
   console.log(content);
-  const messageService = new MessageService();
+  // const messageService = new MessageService();
 
   async function handleSendMessage() {
     //async addMessage(sender_id, content, recipient_id){
@@ -78,9 +94,7 @@ export default function FullChat({ navigation, route }) {
       setContent("");
       const new_message = result.data[0];
       console.log("Message we got back: ", new_message);
-      setCurrentMessages((prev) => prev.concat([new_message]));
-      setPreviousState(allMessages);
-      dispatch(addMessageToSelectedConvo(new_message))
+      dispatch(addMessageToSelectedConvo(new_message));
       dispatch(addMessage(new_message));
     }
   }
@@ -179,7 +193,6 @@ const styles = StyleSheet.create({
     padding: 5,
     // height: 30,
     fontSize: 20,
-    flewGrow: 1,
     width: 290,
     // flex: 1
   },

@@ -1,7 +1,7 @@
-import { User } from '../models/User'
+import { User } from "../models/User";
 
 export default class UserService {
-  constructor() { }
+  constructor() {}
 
   async register(supabase, name, email, password) {
     const { data, error } = await supabase.auth.signUp({
@@ -40,7 +40,7 @@ export default class UserService {
       .update({ last_sign_in_at: data.user.last_sign_in_at })
       .select("*")
       .eq("user_id", String(data.user.id));
-    return new User(response.data[0]);
+    return response.data[0];
   }
 
   async getAuthUserProfile(supabase) {
@@ -60,11 +60,10 @@ export default class UserService {
 
   async updateAvatar(supabase, url, profile_id) {
     const response = await supabase
-    .from("profile")
-    .update({ avatar_url: url})
-    .eq("id", String(profile_id)); 
+      .from("profile")
+      .update({ avatar_url: url })
+      .eq("id", String(profile_id));
 
-    console.log('Response: ', response)
+    console.log("Response: ", response);
   }
-
 }
