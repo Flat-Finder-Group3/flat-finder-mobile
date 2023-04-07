@@ -18,6 +18,11 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import TicketCard from "../../components/TicketCard";
 import FavListingCard from "../../components/FavListingCard";
 import OwnListingCard from "../../components/OwnListingCard";
+
+import ListingSearchedCard from "../../components/ListingSearchedCard";
+import { useDispatch } from "react-redux";
+import { setSelectedListing } from "../../redux/selectedListingSlice";
+
 import { SafeAreaView, SectionList } from "react-native";
 
 export default function Home({
@@ -33,6 +38,8 @@ export default function Home({
 
   const [refreshing, setRefreshing] = useState(false);
 
+  const dispatch = useDispatch()
+
   const DATA = [
     {
       title: "Saved Listings",
@@ -47,6 +54,11 @@ export default function Home({
       data: tickets,
     },
   ];
+
+  function handleMoreInfoPress(item) {
+    dispatch(setSelectedListing(item))
+    navigation.navigate("Listing");
+  }
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -78,9 +90,9 @@ export default function Home({
           // console.log(prop)
           console.log(section.title, section.data.length);
           if (section.title === "Saved Listings") {
-            return <FavListingCard item={item} />;
+            return <ListingSearchedCard item={item} handleMoreInfoPress={handleMoreInfoPress}/>;
           } else if (section.title === "Own Listings") {
-            return <OwnListingCard item={item} />;
+            return <ListingSearchedCard item={item} handleMoreInfoPress={handleMoreInfoPress}/>;
           } else {
             return (
               <TicketCard
