@@ -1,4 +1,5 @@
 import { User } from "../models/User";
+import { supabase } from "../utils/supabase";
 
 export default class UserService {
   constructor() {}
@@ -66,4 +67,15 @@ export default class UserService {
 
     console.log("Response: ", response);
   }
+
+  async getUserById(user_id){
+    const user_profile = await supabase
+        .from("profile")
+        .select("*")
+        .eq("id", String(user_id));
+      console.log('HERE IS THE USER PROFILE BY IDDDDDDDDDD ', user_profile)
+    return user_profile.data[0] 
+  }
+
+
 }

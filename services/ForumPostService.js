@@ -3,7 +3,7 @@ export default class ForumPostService {
     url = "https://flat-finder-server.onrender.com";
 
     async getForumPosts(forum_id) {
-        const response = await fetch(`${this.url}/forum-post?forum_id=${forum_id}`)
+        const response = await fetch(`${this.url}/forum-posts?forum_id=${forum_id}`)
 
         if (response.ok) {
             const posts = await response.json()
