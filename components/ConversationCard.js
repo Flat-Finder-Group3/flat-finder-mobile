@@ -47,7 +47,7 @@ export default function ConversationCard({
   const gradientColors = ["#FF6B92", "#4c669f"];
 
   useEffect(() => {
-    if (convoIndex !== null){
+    if (convoIndex !== null && convoIndex >= 0){
       setLastMessage(allMessages[convoIndex][allMessages[convoIndex].length - 1])
       const count = allMessages[convoIndex].filter((message) => message.sender_id === otherUser.id && !message.is_read).length
       setBadgeCount(count)

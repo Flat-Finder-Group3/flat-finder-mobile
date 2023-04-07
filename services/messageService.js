@@ -76,8 +76,10 @@ export default class MessageService {
       }),
     });
 
+    // console.log("✨✨✨✨✨Here is the RESPONSE: ", response);
     if (response.ok) {
       const result = await response.json();
+      console.log("✨✨✨✨✨Here is the RESULT OF READING: ", result);
       return result;
     }
     return response;

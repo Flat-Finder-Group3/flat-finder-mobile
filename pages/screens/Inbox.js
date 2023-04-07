@@ -24,7 +24,7 @@ export default function Inbox({
   const allMessages = useSelector((state) => state.allMessages);
   const dispatch = useDispatch();
 
-  console.log("All messages in INBOX FROM REDUX 🟢🟢🟢: ", allMessages);
+  // console.log("All messages in INBOX FROM REDUX 🟢🟢🟢: ", allMessages);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -39,7 +39,7 @@ export default function Inbox({
     for (const exchanges of allMessages) {
       if (exchanges[0].conversation_id === item.id) {
         // setCurrentMessages(exchanges);
-        dispatch(setSelectedConvo(exchanges))
+        dispatch(setSelectedConvo(exchanges));
         break;
       }
     }
