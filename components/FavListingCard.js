@@ -10,14 +10,13 @@ export default function FavListing({ item }) {
       <ScrollView
         pagingEnabled
         horizontal
-        style={{ width, height, marginTop: "-50%" }}
-      >
+        style={{ width, height, marginTop: "-50%"}}>
         {item.images.map((image, index) => (
-          <Image
+            <Image
             key={index}
             source={{ uri: image }}
             style={{ width, height, resizeMode: "contain" }}
-          />
+            />
         ))}
       </ScrollView>
     </View>
