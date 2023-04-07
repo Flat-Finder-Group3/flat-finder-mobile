@@ -99,8 +99,8 @@ export default class MessageService {
     });
 
     // console.log("✨✨✨✨✨Here is the RESPONSE: ", response);
-      // const result = await response.json();
+      const result = await response.json();
       // console.log("✨✨✨✨✨Here is the RESULT OF READING: ", result);
-      return response;
+      return result;
   }
 }
