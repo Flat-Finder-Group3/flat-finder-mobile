@@ -39,7 +39,9 @@ export default function Dashboard({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [badgeCount, setBadgeCount] = useState(0);
+  // const [badgeCount, setBadgeCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isUnreadCountInitialized, setIsUnreadCountInitialized] = useState(false);
 
   const userRef = useRef(user);
   const ownListingsRef = useRef(ownListings);
@@ -108,6 +110,7 @@ export default function Dashboard({ navigation, route }) {
         } else {
           dispatch(addMessageToSelectedConvo(new_record))
           dispatch(addMessage(new_record));
+          setUnreadCount(prev => prev + 1)
         }
       } else {
         console.log(
@@ -172,16 +175,20 @@ export default function Dashboard({ navigation, route }) {
   }, [supabase]);
 
   useEffect(() => {
-    let count = 0;
-    for (const conversations of allMessages){
-      for (const message of conversations){
-        if (message.sender_id !== user.id && !message.is_read){
-          count++
+    if (allMessages.length > 0) {
+      let initialCount = 0;
+      for (const conversations of allMessages) {
+        for (const message of conversations) {
+          if (message.sender_id !== user.id && !message.is_read) {
+            initialCount++;
+          }
         }
       }
+      setUnreadCount(initialCount);
+      setIsUnreadCountInitialized(true);
     }
-    setBadgeCount(count)
-  }, [allMessages])
+  }, [allMessages]);
+
   function getBadgeCount() {
     let count = 0;
     for (const convesations of allMessages){
@@ -303,7 +310,7 @@ export default function Dashboard({ navigation, route }) {
           tabBarIcon: ({ color, size }) => {
             return (
               <View>
-                {badgeCount ? <Badge size={12} style={{position: 'absolute', zIndex: 2}}>{badgeCount}</Badge> : <></>}
+                {unreadCount ? <Badge size={12} style={{position: 'absolute', zIndex: 2}}>{unreadCount}</Badge> : <></>}
                 <Icon name="inbox" size={size} color={color} />
               </View>
             )
