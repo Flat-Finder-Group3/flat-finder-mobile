@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Avatar, Button, Card, Text } from "react-native-paper";
 import TicketService from "../services/TicketService";
+import { Empty } from "antd";
 
 const LeftContent = (props) => <Avatar.Icon {...props} icon="ticket" />;
 

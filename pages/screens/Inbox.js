@@ -53,7 +53,8 @@ export default function Inbox({
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.title}>
-          Your chats <Text style={styles.count}>({conversations.length})</Text>
+          Your chats
+          <Text style={styles.count}>({conversations.length})</Text>
         </Text>
       </View>
       <FlatList
