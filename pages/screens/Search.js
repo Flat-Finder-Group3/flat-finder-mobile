@@ -49,7 +49,7 @@ export default function Search({ navigation, loading, listings, fetchData }) {
   };
 
   function handleMoreInfoPress(item) {
-    dispatch(setSelectedListing(item))
+    dispatch(setSelectedListing(item));
     navigation.navigate("Listing");
   }
 
@@ -64,21 +64,39 @@ export default function Search({ navigation, loading, listings, fetchData }) {
   return (
     <SafeAreaView style={styles.container}>
       <Searchbar
-        placeholder="Search"
+        placeholder="Enter a city"
         onSubmitEditing={handleTextInputChange}
         // value={searchQuery}
       />
-      <FlatList
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        renderItem={({item}) => <ListingSearchedCard item={item} handleMoreInfoPress={handleMoreInfoPress}/>}
-        data={listings.filter(
-          (listing) =>
-            listing.address.city.toLowerCase() === searchQuery.toLowerCase()
-        )}
-        keyExtractor={(item) => item.id}
-      />
+      {listings.filter(
+        (listing) =>
+          listing.address.city.toLowerCase() === searchQuery.toLowerCase()
+      ).length === 0 ? (
+        <Card
+          style={{ marginLeft: "0%", alignItems: "center", marginTop: "10%" }}
+        >
+          <Card.Content>
+            <Text>No listing found</Text>
+          </Card.Content>
+        </Card>
+      ) : (
+        <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          renderItem={({ item }) => (
+            <ListingSearchedCard
+              item={item}
+              handleMoreInfoPress={handleMoreInfoPress}
+            />
+          )}
+          data={listings.filter(
+            (listing) =>
+              listing.address.city.toLowerCase() === searchQuery.toLowerCase()
+          )}
+          keyExtractor={(item) => item.id}
+        />
+      )}
       <StatusBar style="auto" />
     </SafeAreaView>
   );
