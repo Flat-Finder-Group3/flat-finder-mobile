@@ -1,14 +1,9 @@
-import { CommonActions } from "@react-navigation/native";
 import React, { useState } from "react";
-import { useEffect } from "react";
 import {
   View,
   StyleSheet,
-  Button,
   StatusBar,
-  FlatList,
   RefreshControl,
-  ScrollView,
 } from "react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -16,11 +11,8 @@ import { Text, BottomNavigation, Card } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 // import { styles } from '../../styles'
 import TicketCard from "../../components/TicketCard";
-import FavListingCard from "../../components/FavListingCard";
-import OwnListingCard from "../../components/OwnListingCard";
-
 import ListingSearchedCard from "../../components/ListingSearchedCard";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setSelectedListing } from "../../redux/selectedListingSlice";
 
 import { SafeAreaView, SectionList } from "react-native";
@@ -30,11 +22,11 @@ export default function Home({
   route,
   tickets,
   ownListings,
-  favListings,
   loading,
   fetchData,
 }) {
-  favListings = favListings.map((item) => item.listing);
+  // favListings = favListings.map((item) => item.listing);
+  const favListings = useSelector(state => state.favListings.map(item => item.listing));
 
   const [refreshing, setRefreshing] = useState(false);
 
