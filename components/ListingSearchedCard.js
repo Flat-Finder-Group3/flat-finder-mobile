@@ -4,9 +4,31 @@ import {
 } from "react-native";
 import { Text, BottomNavigation, Button, Card } from "react-native-paper";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-
+import { useDispatch, useSelector } from "react-redux";
+import { favListingSevice } from "../services/Instances";
+import { unfavListing, addFavListing } from "../redux/favListingSlice";
 
 export default function ListingSearchedCard({ item, handleMoreInfoPress }) {
+
+  const favIds = useSelector(state => state.favListings.map(item => item.listing.id))
+  console.log('Array of favIds!', favIds, item.id)
+  const user = useSelector(state => state.user)
+  const dispatch = useDispatch()
+
+  async function handleFav(listing_id) {
+    if (favIds.includes(listing_id)) {
+      const result = await favListingSevice.removeFavListing(
+        user.id,
+        listing_id
+      );
+      console.log("Result of removal! ", result);
+      dispatch(unfavListing(listing_id));
+    } else {
+      const result = await favListingSevice.addFavListing(user.id, listing_id);
+      dispatch(addFavListing(result.data[0]));
+    }
+  }
+  
 
   return (
     <Card style={{ marginBottom: "10%", marginTop: "10%" }}>
@@ -36,11 +58,17 @@ export default function ListingSearchedCard({ item, handleMoreInfoPress }) {
       </Card.Content>
 
       <Card.Actions>
-        <FontAwesome
-          name="star"
-          size={24}
-          style={{ alignContent: "center" }}
-        />
+        {favIds.includes(item.id) ?
+          <FontAwesome
+            name="star"
+            size={24}
+            style={{ alignContent: "center" }}
+            onPress={() => handleFav(item.id)}
+          /> : 
+          <FontAwesome name="star-o" size={24}
+          onPress={() => handleFav(item.id)}
+          />
+        }
         <Button onPress={() => handleMoreInfoPress(item)}>More info</Button>
       </Card.Actions>
     </Card>

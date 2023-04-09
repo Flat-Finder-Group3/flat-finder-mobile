@@ -1,26 +1,16 @@
-import { CommonActions } from "@react-navigation/native";
 import React, { useState } from "react";
-import { useEffect } from "react";
 import {
   View,
   StyleSheet,
-  Button,
   StatusBar,
-  FlatList,
   RefreshControl,
-  ScrollView,
 } from "react-native";
 
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text, BottomNavigation } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { Text, BottomNavigation, Card } from "react-native-paper";
 // import { styles } from '../../styles'
 import TicketCard from "../../components/TicketCard";
-import FavListingCard from "../../components/FavListingCard";
-import OwnListingCard from "../../components/OwnListingCard";
-
 import ListingSearchedCard from "../../components/ListingSearchedCard";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setSelectedListing } from "../../redux/selectedListingSlice";
 
 import { SafeAreaView, SectionList } from "react-native";
@@ -30,15 +20,15 @@ export default function Home({
   route,
   tickets,
   ownListings,
-  favListings,
   loading,
   fetchData,
 }) {
-  favListings = favListings.map((item) => item.listing);
+  // favListings = favListings.map((item) => item.listing);
+  const favListings = useSelector(state => state.favListings.map(item => item.listing));
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const DATA = [
     {
@@ -56,7 +46,7 @@ export default function Home({
   ];
 
   function handleMoreInfoPress(item) {
-    dispatch(setSelectedListing(item))
+    dispatch(setSelectedListing(item));
     navigation.navigate("Listing");
   }
 
@@ -83,16 +73,52 @@ export default function Home({
         }
         renderSectionFooter={({ section }) => {
           if (section.data.length === 0) {
-            return <Text>No data D:</Text>;
+            return (
+              <Card style={{ marginLeft: "0%", alignItems: "center" }}>
+                <Card.Content>
+                  <Text>Nothing to show</Text>
+                </Card.Content>
+              </Card>
+            );
           }
         }}
         renderItem={({ section, item, setTickets, tickets }) => {
           // console.log(prop)
           console.log(section.title, section.data.length);
           if (section.title === "Saved Listings") {
-            return <ListingSearchedCard item={item} handleMoreInfoPress={handleMoreInfoPress}/>;
+            if (section.data.length === 0) {
+              return (
+                <Card style={{ marginLeft: "0%", alignItems: "center" }}>
+                  <Card.Content>
+                    <Text>Nothing to show</Text>
+                  </Card.Content>
+                </Card>
+              );
+            } else {
+              return (
+                <ListingSearchedCard
+                  item={item}
+                  handleMoreInfoPress={handleMoreInfoPress}
+                />
+              );
+            }
           } else if (section.title === "Own Listings") {
-            return <ListingSearchedCard item={item} handleMoreInfoPress={handleMoreInfoPress}/>;
+            if (section.data.length === 0) {
+              return (
+                <Card style={{ marginLeft: "0%", alignItems: "center" }}>
+                  <Card.Content>
+                    <Text>Nothing to show</Text>
+                  </Card.Content>
+                </Card>
+              );
+            } else {
+              return (
+                <ListingSearchedCard
+                  item={item}
+                  handleMoreInfoPress={handleMoreInfoPress}
+                />
+              );
+            }
           } else {
             return (
               <TicketCard

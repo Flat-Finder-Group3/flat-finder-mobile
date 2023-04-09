@@ -21,6 +21,8 @@ import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
 import { Badge } from "react-native-paper";
 import { addMessageToForumPosts } from "../redux/selectedForumPostsSlice";
 import { setSnackBarVisibility } from "../redux/snackBarSlice";
+import { setFavListings } from "../redux/favListingSlice";
+import { favListingSevice } from "../services/Instances";
 
 const Tab = createBottomTabNavigator();
 
@@ -33,26 +35,27 @@ export default function Dashboard({ navigation, route }) {
   
 
   const [listings, setListings] = useState([]);
-  const [favListings, setFavListings] = useState([]);
+  // const [favListings, setFavListings] = useState([]);
   const [ownListings, setOwnListings] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
-  // const [badgeCount, setBadgeCount] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isUnreadCountInitialized, setIsUnreadCountInitialized] = useState(false);
 
+  const favListings = useSelector(state => state.favListings)
   const userRef = useRef(user);
   const ownListingsRef = useRef(ownListings);
   const selectedListingRef = useRef(selectedListing);
+
 
   const dispatch = useDispatch();
 
 
   const userService = new UserService();
   const listingService = new ListingService();
-  const favListingSevice = new FavListingService();
+
   const ticketService = new TicketService();
   const messageService = new MessageService();
 
@@ -67,19 +70,20 @@ export default function Dashboard({ navigation, route }) {
         ticketService.getUserTicket(user.id),
         messageService.getUserConversations(user.id),
       ]);
-    setFavListings(new_favListings);
+    // setFavListings(new_favListings);
+    dispatch(setFavListings(new_favListings))
     setOwnListings(new_ownListings);
     setTickets(new_tickets);
     setLoading(false);
     setConversations(new_conversations);
 
-    console.log({ conversations });
+    // console.log({ conversations });
     const twoDMessageArray = await Promise.all(
       new_conversations.map((conversation) => {
         return messageService.getConversationMessages(conversation.id);
       })
     );
-    console.log({ twoDMessageArray });
+    // console.log({ twoDMessageArray });
     dispatch(setAllMessages(twoDMessageArray));
     setMessages(twoDMessageArray);
   }
@@ -94,9 +98,9 @@ export default function Dashboard({ navigation, route }) {
     selectedListingRef.current = selectedListing
   }, [user, ownListings, selectedListing]);
 
-  useEffect(() => {
-    console.log("State changed 🟢🟢🟢");
-  }, [messages]);
+  // useEffect(() => {
+  //   console.log("State changed 🟢🟢🟢");
+  // }, [messages]);
 
   async function handleMessageEvent(new_record, user, eventType) {
     console.log("NEW RECORDDDDD🟢🟢🟢🟢🟢🟢 ", new_record);
@@ -188,26 +192,6 @@ export default function Dashboard({ navigation, route }) {
       setIsUnreadCountInitialized(true);
     }
   }, [allMessages]);
-
-  function getBadgeCount() {
-    let count = 0;
-    for (const convesations of allMessages){
-      for (const message of allMessages){
-        if (!message.is_read){
-          count++
-        }
-      }
-    }
-    return count
-  }
-
-  // useEffect(() => {
-  //   console.log({ ownListings, tickets, listings });
-  // }, [ownListings, tickets, listings]);
-
-  // useEffect(() => {
-  //   console.log("User inside dashboard! ", user);
-  // }, []);
 
   return (
     <>
