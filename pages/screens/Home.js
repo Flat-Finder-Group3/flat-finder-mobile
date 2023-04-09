@@ -6,7 +6,9 @@ import {
   RefreshControl,
 } from "react-native";
 
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text, BottomNavigation, Card } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 // import { styles } from '../../styles'
 import TicketCard from "../../components/TicketCard";
 import ListingSearchedCard from "../../components/ListingSearchedCard";
