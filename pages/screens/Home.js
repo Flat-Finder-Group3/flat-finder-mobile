@@ -11,10 +11,13 @@ import {
   ScrollView,
 } from "react-native";
 
-import { Text, BottomNavigation } from "react-native-paper";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Text, BottomNavigation, Card } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 // import { styles } from '../../styles'
 import TicketCard from "../../components/TicketCard";
+import FavListingCard from "../../components/FavListingCard";
+import OwnListingCard from "../../components/OwnListingCard";
 
 import ListingSearchedCard from "../../components/ListingSearchedCard";
 import { useDispatch } from "react-redux";
@@ -80,26 +83,52 @@ export default function Home({
         }
         renderSectionFooter={({ section }) => {
           if (section.data.length === 0) {
-            return <Text>No data D:</Text>;
+            return (
+              <Card style={{ marginLeft: "0%", alignItems: "center" }}>
+                <Card.Content>
+                  <Text>Nothing to show</Text>
+                </Card.Content>
+              </Card>
+            );
           }
         }}
         renderItem={({ section, item, setTickets, tickets }) => {
           // console.log(prop)
           console.log(section.title, section.data.length);
           if (section.title === "Saved Listings") {
-            return (
-              <ListingSearchedCard
-                item={item}
-                handleMoreInfoPress={handleMoreInfoPress}
-              />
-            );
+            if (section.data.length === 0) {
+              return (
+                <Card style={{ marginLeft: "0%", alignItems: "center" }}>
+                  <Card.Content>
+                    <Text>Nothing to show</Text>
+                  </Card.Content>
+                </Card>
+              );
+            } else {
+              return (
+                <ListingSearchedCard
+                  item={item}
+                  handleMoreInfoPress={handleMoreInfoPress}
+                />
+              );
+            }
           } else if (section.title === "Own Listings") {
-            return (
-              <ListingSearchedCard
-                item={item}
-                handleMoreInfoPress={handleMoreInfoPress}
-              />
-            );
+            if (section.data.length === 0) {
+              return (
+                <Card style={{ marginLeft: "0%", alignItems: "center" }}>
+                  <Card.Content>
+                    <Text>Nothing to show</Text>
+                  </Card.Content>
+                </Card>
+              );
+            } else {
+              return (
+                <ListingSearchedCard
+                  item={item}
+                  handleMoreInfoPress={handleMoreInfoPress}
+                />
+              );
+            }
           } else {
             return (
               <TicketCard
