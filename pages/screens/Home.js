@@ -1,13 +1,9 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  StatusBar,
-  RefreshControl,
-} from "react-native";
+import { View, StyleSheet, StatusBar, RefreshControl } from "react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text, BottomNavigation, Card } from "react-native-paper";
+import { ActivityIndicator, Colors } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 // import { styles } from '../../styles'
 import TicketCard from "../../components/TicketCard";
@@ -26,7 +22,9 @@ export default function Home({
   fetchData,
 }) {
   // favListings = favListings.map((item) => item.listing);
-  const favListings = useSelector(state => state.favListings.map(item => item.listing));
+  const favListings = useSelector((state) =>
+    state.favListings.map((item) => item.listing)
+  );
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -61,7 +59,7 @@ export default function Home({
   if (loading)
     return (
       <View>
-        <Text>Loading....</Text>
+        <ActivityIndicator animating={true} color={"Red"} />
       </View>
     );
 
