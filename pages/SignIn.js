@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { supabase } from "../utils/supabase";
 import { Button, Input } from "react-native-elements";
+import { Image } from "react-native-paper";
 import UserService from "../services/UserService";
 import { CommonActions } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";

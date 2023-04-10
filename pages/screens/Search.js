@@ -1,5 +1,6 @@
 import { CommonActions } from "@react-navigation/native";
 import React, { useEffect } from "react";
+import { ActivityIndicator, Colors } from "react-native-paper";
 import { useState } from "react";
 import {
   View,
@@ -56,7 +57,7 @@ export default function Search({ navigation, loading, listings, fetchData }) {
   if (loading) {
     return (
       <View>
-        <Text>Loading...</Text>
+        <ActivityIndicator animating={true} color={"Red"} />
       </View>
     );
   }
