@@ -23,7 +23,7 @@ import { addMessageToSelectedConvo } from "../redux/selectedConvoSlice";
 export default function FullChat({ navigation, route }) {
   const { conversation, fetchData } = route.params;
 
-  const messageService = new MessageService()
+  const messageService = new MessageService();
 
   const allMessages = useSelector((state) => state.allMessages);
   const user = useSelector((state) => state.user);
@@ -39,21 +39,22 @@ export default function FullChat({ navigation, route }) {
 
     const toReadMessages = convoMessages.reduce((result, message) => {
       if (message.sender_id !== user.id && !message.is_read) {
-        sender_id = message.sender_id 
+        sender_id = message.sender_id;
         result.push(message.id);
       }
       return result;
     }, []);
 
-    
     console.log("TO READ MESSAGES ! ", toReadMessages);
     console.log("CONV. ID: ", convoMessages[0].conversation_id);
-    if (toReadMessages.length){
+    if (toReadMessages.length) {
       try {
-        const result = messageService.readUserMessages(sender_id, convoMessages[0].conversation_id).catch(error => console.log(error))
-        console.log('Result or reading! ', result)
+        const result = messageService
+          .readUserMessages(sender_id, convoMessages[0].conversation_id)
+          .catch((error) => console.log(error));
+        console.log("Result or reading! ", result);
       } catch (e) {
-        console.log('Error reading: ', e)
+        console.log("Error reading: ", e);
       }
     }
     dispatch(
@@ -71,7 +72,7 @@ export default function FullChat({ navigation, route }) {
   useEffect(() => {
     (async () => {
       await readMessages();
-    })()
+    })();
   }, []);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -111,7 +112,8 @@ export default function FullChat({ navigation, route }) {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       // keyboardVerticalOffset={Platform.OS === 'ios' ? -20 : 20}
-      style={styles.container}>
+      style={styles.container}
+    >
       <FlatList
         style={{ flex: 1 }}
         refreshControl={
@@ -126,7 +128,8 @@ export default function FullChat({ navigation, route }) {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "position" : "height"}
         style={styles.keyboardAvoidingView}
-        keyboardVerticalOffset={Platform.OS === "ios" ? -80 : 20}>
+        keyboardVerticalOffset={Platform.OS === "ios" ? -80 : 20}
+      >
         <View style={styles.inputAndSendContainer}>
           <TextInput
             onChangeText={(e) => setContent(e)}
@@ -137,7 +140,8 @@ export default function FullChat({ navigation, route }) {
           <Button
             icon={"send-circle"}
             style={styles.send}
-            onPress={handleSendMessage}>
+            onPress={handleSendMessage}
+          >
             Send
           </Button>
         </View>
@@ -171,7 +175,7 @@ const styles = StyleSheet.create({
   },
   keyboardAvoidingView: {
     borderWidth: 1,
-    borderColor: "red",
+    // borderColor: "red",
     flexDirection: "row",
     // flex: 1
   },
@@ -198,7 +202,7 @@ const styles = StyleSheet.create({
     // flex: 1
   },
   send: {
-    borderWidth: 1,
+    // borderWidth: 1,
     // borderColor: '#e1e3e1',
   },
 });
