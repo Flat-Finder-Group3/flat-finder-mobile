@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View, Dimensions } from "react-native";
 import { supabase } from "../utils/supabase";
 import { Button, Input } from "react-native-elements";
-import { Image } from "react-native-paper";
+import { Image } from "react-native-elements";
 import UserService from "../services/UserService";
 import { CommonActions } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
@@ -59,9 +59,13 @@ export default function SignIn({ navigation }) {
     if (error) Alert.alert(error.message);
     setLoading(false);
   }
+  const { width } = Dimensions.get("window");
 
   return (
     <View style={styles.container}>
+      {/* <View style={{ borderWidth: 1, borderColor: "red" }}> */}
+
+      {/* </View> */}
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
           label="Email"
@@ -93,19 +97,30 @@ export default function SignIn({ navigation }) {
           onPress={() => signUpWithEmail()}
         />
       </View>
+      <Image
+        source={{
+          uri: "https://ewbcpghsdfeysreslsbk.supabase.co/storage/v1/object/public/assets/fdm.png",
+        }}
+        style={{ width: "100%", height: "50%" }}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
-    padding: 12,
+    // marginTop: 40,
+    paddingLeft: 12,
+    paddingRight: 12,
+    // borderWidth: 1,
+    // borderColor: "red",
   },
   verticallySpaced: {
     paddingTop: 4,
     paddingBottom: 4,
     alignSelf: "stretch",
+    // borderWidth: 1,
+    // borderColor: "red",
   },
   mt20: {
     marginTop: 20,
