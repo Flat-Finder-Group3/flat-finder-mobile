@@ -17,6 +17,7 @@ export default function Home({
   navigation,
   route,
   tickets,
+  setTickets,
   ownListings,
   loading,
   fetchData,
@@ -82,7 +83,7 @@ export default function Home({
             );
           }
         }}
-        renderItem={({ section, item, setTickets, tickets }) => {
+        renderItem={({ section, item }) => {
           // console.log(prop)
           console.log(section.title, section.data.length);
           if (section.title === "Saved Listings") {
